@@ -1,7 +1,8 @@
 class Authorization {
-  static const String PIN = "pin";
   static const String AVS = "avs_noauth";
+  static const String REDIRECT = "redirect";
   static const String OTP = "otp";
+  static const String PIN = "pin";
 
   String mode;
   String pin;

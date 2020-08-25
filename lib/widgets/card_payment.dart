@@ -187,6 +187,7 @@ class _CardPaymentState extends State<CardPayment> {
         expiryYear: this._cardYearFieldController.value.text,
         currency: this.widget.paymentManager.currency,
         amount: this.widget.paymentManager.amount,
+        email: this.widget.paymentManager.email,
         fullName: this.widget.paymentManager.fullName,
         txRef: this.widget.paymentManager.txRef
     );
