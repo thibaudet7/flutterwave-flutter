@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
 import 'package:flutterwave/models/requests/authorization.dart';
 import 'package:flutterwave/models/responses/charge_card_response/charge_card_response.dart';
-import 'package:http/http.dart' as http;
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutterwave/models/requests/charge_card_request.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
 
@@ -18,6 +19,7 @@ class FlutterwavePaymentManager {
   String txRef;
   String redirectUrl;
   bool isDebugMode;
+
   ChargeCardRequest chargeCardRequest;
 
   FlutterwavePaymentManager({
@@ -40,20 +42,19 @@ class FlutterwavePaymentManager {
   }
 
   Future<dynamic> payWithCard(final http.Client client,
-      final ChargeCardRequest chargeCardRequest) async {
-    print("Charge Request is ${chargeCardRequest.toJson()}");
+      final ChargeCardRequest chargeCardRequest,
+      final CardPaymentListener cardPaymentListener) async {
     this.chargeCardRequest = chargeCardRequest;
     final Map<String, String> encryptedPayload =
         this._prepareRequest(chargeCardRequest);
 
-    print("Encrypted Request is $encryptedPayload");
+    print("Encryptes response is $encryptedPayload");
 
     final url = FlutterwaveUtils.BASE_URL + FlutterwaveUtils.CHARGE_CARD_URL;
     final http.Response response = await client.post(url,
         headers: {HttpHeaders.authorizationHeader: this.publicKey},
         body: encryptedPayload);
     try {
-      print("Responssse code is ${jsonDecode(response.body)}");
       final responseBody =
           ChargeCardResponse.fromJson(jsonDecode(response.body));
       if (response.statusCode == 200 &&
@@ -63,34 +64,38 @@ class FlutterwavePaymentManager {
           case Authorization.AVS:
             {
               print("Authorization is Address Verification");
-              print("Auth Body is ${responseBody.meta.authorization.toJson()}");
+              cardPaymentListener.onRequireAddress();
               break;
             }
           case Authorization.REDIRECT:
             {
               print("Authorization is Redirect");
-              print("Auth Body is ${responseBody.meta.authorization.toJson()}");
+              cardPaymentListener.onRedirect(responseBody.meta.authorization.redirect);
               break;
             }
           case Authorization.OTP:
             {
               print("Authorization is OTP");
-              print("Auth Body is ${responseBody.meta.authorization.toJson()}");
+              cardPaymentListener.onRequireOTP();
               break;
             }
           case Authorization.PIN:
             {
               print("Authorization is PIN");
-              print("Auth Body is ${responseBody.meta.authorization.toJson()}");
+              cardPaymentListener.onRequirePin();
               break;
             }
         }
         return;
       }
+      if (response.statusCode.toString().substring(0) == "4") {
+        print("Response error is ${responseBody.message}");
+        print("Response code is ${response.statusCode}");
+        cardPaymentListener.onError(responseBody.message);
+      }
       print("Response code is ${response.statusCode}");
       print("Parsed response is ${responseBody.toJson()}");
       print("message is ${responseBody.message}");
-//      print("Parsed response is ${responseBody.toJson()}");
     } catch (e) {
       print("Error is ${e.toString()}");
     }

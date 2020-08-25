@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 import 'package:flutterwave/widgets/flutterwave_payment.dart';
+
+import 'flutterwave_payment_manager.dart';
+import 'interfaces/card_payment_listener.dart';
 
 class Flutterwave {
   BuildContext context;
