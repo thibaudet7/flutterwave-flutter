@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:flutterwave/core/flutterwave_payment_manager.dart';
+import 'package:flutterwave/models/requests/charge_card_request.dart';
 
 class CardPayment extends StatefulWidget {
+  CardPayment(this.paymentManager);
+
+  final FlutterwavePaymentManager paymentManager;
+
   @override
   _CardPaymentState createState() => _CardPaymentState();
 }
@@ -8,11 +16,11 @@ class CardPayment extends StatefulWidget {
 class _CardPaymentState extends State<CardPayment> {
   final _cardFormKey = GlobalKey<FormState>();
   final TextEditingController _cardNumberFieldController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _cardMonthFieldController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _cardYearFieldController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _cardCvvFieldController = TextEditingController();
 
   @override
@@ -60,7 +68,10 @@ class _CardPaymentState extends State<CardPayment> {
                 Row(
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width / 5,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width / 5,
                       margin: EdgeInsets.all(20),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -82,7 +93,10 @@ class _CardPaymentState extends State<CardPayment> {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 5,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width / 5,
                       margin: EdgeInsets.all(20),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -104,7 +118,10 @@ class _CardPaymentState extends State<CardPayment> {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 5,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width / 5,
                       margin: EdgeInsets.fromLTRB(30, 20, 5, 20),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -162,13 +179,19 @@ class _CardPaymentState extends State<CardPayment> {
 
   void _makeCardPayment() {
     Navigator.of(this.context).pop();
-
-    final Map<String, String> card = Map();
-    card["cardNumber"] = this._cardNumberFieldController.value.text;
-    card["cardMonth"] = this._cardMonthFieldController.value.text;
-    card["cardYear"] = this._cardYearFieldController.value.text;
-    card["cardCVV"] = this._cardCvvFieldController.value.text;
-    print(card);
+    // show loading indicator
+    final ChargeCardRequest chargeCardRequest = ChargeCardRequest(
+        cardNumber: this._cardNumberFieldController.value.text,
+        cvv: this._cardCvvFieldController.value.text,
+        expiryMonth: this._cardMonthFieldController.value.text,
+        expiryYear: this._cardYearFieldController.value.text,
+        currency: this.widget.paymentManager.currency,
+        amount: this.widget.paymentManager.amount,
+        fullName: this.widget.paymentManager.fullName,
+        txRef: this.widget.paymentManager.txRef
+    );
+    final client = http.Client();
+    this.widget.paymentManager.payWithCard(client, chargeCardRequest);
   }
 
   Future<void> showConfirmPaymentModal() async {
@@ -178,7 +201,7 @@ class _CardPaymentState extends State<CardPayment> {
         builder: (BuildContext buildContext) {
           return AlertDialog(
             content: Text(
-              "You will be charged a total of ${200.00} NGN. Do you wish to continue? ",
+              "You will be charged a total of ${this.widget.paymentManager.amount} NGN. Do you wish to continue? ",
               textAlign: TextAlign.start,
               style: TextStyle(
                 color: Colors.black,
@@ -199,6 +222,8 @@ class _CardPaymentState extends State<CardPayment> {
   }
 
   String _validateCardField(String value) {
-    return value.trim().isEmpty ? "Please fill this" : null;
+    return value
+        .trim()
+        .isEmpty ? "Please fill this" : null;
   }
 }

@@ -8,6 +8,12 @@ class Flutterwave {
   String publicKey;
   String encryptionKey;
   bool isDebugMode;
+  String amount;
+  String currency;
+  String email;
+  String fullName;
+  String txRef;
+  String redirectUrl;
   bool acceptAccountPayment;
   bool acceptBankTransferPayment;
   bool acceptCardPayment;
@@ -23,23 +29,37 @@ class Flutterwave {
     @required this.context,
     @required this.publicKey,
     @required this.encryptionKey,
-    this.isDebugMode,
-    this.acceptAccountPayment,
-    this.acceptBankTransferPayment,
-    this.acceptCardPayment,
-    this.acceptUSSDPayment,
-    this.acceptUKAccountPayment,
-    this.acceptRwandaMoneyPayment,
-    this.acceptMpesaPayment,
-    this.acceptZambiaPayment,
-    this.acceptGhanaPayment,
-    this.acceptUgandaPayment
+    @required this.currency,
+    @required this.amount,
+    @required this.email,
+    @required this.fullName,
+    @required this.txRef,
+    @required this.isDebugMode,
+    this.redirectUrl = "",
+    this.acceptAccountPayment = false,
+    this.acceptBankTransferPayment = false,
+    this.acceptCardPayment = false,
+    this.acceptUSSDPayment = false,
+    this.acceptUKAccountPayment = false,
+    this.acceptRwandaMoneyPayment = false,
+    this.acceptMpesaPayment = false,
+    this.acceptZambiaPayment = false,
+    this.acceptGhanaPayment = false,
+    this.acceptUgandaPayment = false,
   });
 
   void initialize() {
     FlutterwavePaymentManager paymentManager = FlutterwavePaymentManager(
-        publicKey: this.publicKey, isDebugMode: this.isDebugMode);
-    if (this.context == null) { }
+      publicKey: this.publicKey,
+      encryptionKey: this.encryptionKey,
+      currency: this.currency,
+      email: this.email,
+      fullName: this.fullName,
+      amount: this.amount,
+      txRef: this.txRef,
+      isDebugMode: this.isDebugMode,
+    );
+    if (this.context == null) {}
     return this._launchPaymentScreen(paymentManager);
   }
 

@@ -5,7 +5,9 @@ import 'package:flutterwave/widgets/card_payment.dart';
 import 'flutterwave_payment_option.dart';
 
 class FlutterwaveUI extends StatefulWidget {
-  FlutterwaveUI(FlutterwavePaymentManager paymentManager);
+  final FlutterwavePaymentManager paymentManager;
+
+  FlutterwaveUI(this.paymentManager);
 
   @override
   _FlutterwaveUIState createState() => _FlutterwaveUIState();
@@ -125,7 +127,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
   void _launchCardPaymentWidget() {
     Navigator.push(
       this.context,
-      MaterialPageRoute(builder: (context) => CardPayment()),
+      MaterialPageRoute(builder: (context) => CardPayment(widget.paymentManager)),
     );
   }
 }

@@ -6,8 +6,8 @@ class ChargeCardRequest {
   String cvv;
   String expiryMonth;
   String expiryYear;
-  String currency;
   String amount;
+  String currency;
   String email;
   String fullName;
   String txRef;
@@ -24,10 +24,10 @@ class ChargeCardRequest {
     @required this.email,
     @required this.fullName,
     @required this.txRef,
-    @required this.redirectUrl
+    this.redirectUrl = "",
   });
 
-  Map<String, dynamic> toJson () {
+  Map<String, dynamic> toJson() {
     return {
       "card_number": this.cardNumber,
       "cvv": this.cvv,
@@ -41,5 +41,4 @@ class ChargeCardRequest {
       "redirect_url": this.redirectUrl
     };
   }
-
 }

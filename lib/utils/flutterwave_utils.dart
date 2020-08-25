@@ -1,8 +1,8 @@
 import 'package:tripledes/tripledes.dart';
 
 class FlutterwaveUtils {
-  static const String CHARGE_CARD_URL = "/charges?type=card";
-  static const String BASE_URL = "https://ravesandboxapi.flutterwave.com/v3/sdkcheckout";
+  static const String CHARGE_CARD_URL = "charges?type=card";
+  static const String BASE_URL = "https://ravesandboxapi.flutterwave.com/v3/sdkcheckout/";
 
   static String TripleDESEncrypt(dynamic data, String encryptionKey) {
     final blockCipher = BlockCipher(TripleDESEngine(), encryptionKey);
