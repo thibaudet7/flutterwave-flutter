@@ -1,8 +1,6 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
-import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 
+import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 import 'package:flutterwave/widgets/flutterwave_payment.dart';
 
 class Flutterwave {
@@ -21,10 +19,10 @@ class Flutterwave {
   bool acceptGhanaPayment;
   bool acceptUgandaPayment;
 
-  Flutterwave.UIPayment({
+  Flutterwave.UiPayment({
     @required this.context,
-    this.publicKey,
-    this.encryptionKey,
+    @required this.publicKey,
+    @required this.encryptionKey,
     this.isDebugMode,
     this.acceptAccountPayment,
     this.acceptBankTransferPayment,

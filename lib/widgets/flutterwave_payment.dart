@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
+import 'package:flutterwave/widgets/card_payment.dart';
 
 import 'flutterwave_payment_option.dart';
 
@@ -76,7 +77,9 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                       width: double.infinity,
                       height: 50.0,
                       child: FlutterwavePaymentOption(
-                          handleClick: () => {}, buttonText: "Account"),
+                        handleClick: () => {},
+                        buttonText: "Account",
+                      ),
                     ),
                     SizedBox(
                       height: 0.5,
@@ -85,7 +88,9 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                       width: double.infinity,
                       height: 50.0,
                       child: FlutterwavePaymentOption(
-                          handleClick: () => {}, buttonText: "card"),
+                        handleClick: this._launchCardPaymentWidget,
+                        buttonText: "card",
+                      ),
                     ),
                     SizedBox(
                       height: 0.5,
@@ -93,7 +98,9 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                     SizedBox(
                       height: 50.0,
                       child: FlutterwavePaymentOption(
-                          handleClick: () => {}, buttonText: "bank transfer"),
+                        handleClick: () => {},
+                        buttonText: "bank transfer",
+                      ),
                     ),
                     SizedBox(
                       height: 0.5,
@@ -101,7 +108,9 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                     SizedBox(
                       height: 50.0,
                       child: FlutterwavePaymentOption(
-                          handleClick: () => {}, buttonText: "ussd"),
+                        handleClick: () => {},
+                        buttonText: "ussd",
+                      ),
                     ),
                   ],
                 ),
@@ -110,6 +119,13 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
           ),
         ),
       ),
+    );
+  }
+
+  void _launchCardPaymentWidget() {
+    Navigator.push(
+      this.context,
+      MaterialPageRoute(builder: (context) => CardPayment()),
     );
   }
 }
