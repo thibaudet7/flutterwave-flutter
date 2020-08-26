@@ -14,7 +14,8 @@ class CardPayment extends StatefulWidget {
   _CardPaymentState createState() => _CardPaymentState();
 }
 
-class _CardPaymentState extends State<CardPayment> implements CardPaymentListener {
+class _CardPaymentState extends State<CardPayment>
+    implements CardPaymentListener {
   final _cardFormKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -77,7 +78,6 @@ class _CardPaymentState extends State<CardPayment> implements CardPaymentListene
                       child: TextFormField(
                         decoration: InputDecoration(
                           hintText: "Month",
-//                      labelText: "Month",
                           labelStyle: TextStyle(
                             color: Colors.black26,
                           ),
@@ -99,7 +99,6 @@ class _CardPaymentState extends State<CardPayment> implements CardPaymentListene
                       child: TextFormField(
                         decoration: InputDecoration(
                           hintText: "Year",
-//                      labelText: "Year",
                           labelStyle: TextStyle(
                             color: Colors.black26,
                           ),
@@ -121,7 +120,6 @@ class _CardPaymentState extends State<CardPayment> implements CardPaymentListene
                       child: TextFormField(
                         decoration: InputDecoration(
                           hintText: "CVV",
-//                      labelText: "CVV",
                           labelStyle: TextStyle(
                             color: Colors.black26,
                           ),
@@ -216,6 +214,29 @@ class _CardPaymentState extends State<CardPayment> implements CardPaymentListene
         });
   }
 
+  Future<void> showErrorModal(final String error) async {
+    return showDialog(
+        context: this.context,
+        barrierDismissible: false,
+        builder: (BuildContext buildContext) {
+          return AlertDialog(
+            content: Text(
+              error,
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            actions: [
+              FlatButton(
+                onPressed: () => {Navigator.of(this.context).pop()},
+                child: Text("OK"),
+              )
+            ],
+          );
+        });
+  }
+
   String _validateCardField(String value) {
     return value.trim().isEmpty ? "Please fill this" : null;
   }
@@ -246,7 +267,13 @@ class _CardPaymentState extends State<CardPayment> implements CardPaymentListene
 
   @override
   void onError(String error) {
-    // TODO: implement onError
+    SnackBar snackBar = SnackBar(
+      content: Text(
+        error,
+        textAlign: TextAlign.center,
+      ),
+    );
+    this._scaffoldKey.currentState.showSnackBar(snackBar);
     print("On Error called in Widget => $error");
   }
 }

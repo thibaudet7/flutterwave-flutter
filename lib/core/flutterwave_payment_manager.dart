@@ -61,43 +61,36 @@ class FlutterwavePaymentManager {
           responseBody.meta != null &&
           responseBody.meta.authorization != null) {
         switch (responseBody.meta.authorization.mode) {
-          case Authorization.AVS:
-            {
-              print("Authorization is Address Verification");
+          case Authorization.AVS: {
               cardPaymentListener.onRequireAddress();
               break;
             }
-          case Authorization.REDIRECT:
-            {
-              print("Authorization is Redirect");
+          case Authorization.REDIRECT: {
               cardPaymentListener.onRedirect(responseBody.meta.authorization.redirect);
               break;
             }
-          case Authorization.OTP:
-            {
-              print("Authorization is OTP");
+          case Authorization.OTP: {
               cardPaymentListener.onRequireOTP();
               break;
             }
-          case Authorization.PIN:
-            {
-              print("Authorization is PIN");
+          case Authorization.PIN: {
               cardPaymentListener.onRequirePin();
               break;
             }
         }
         return;
       }
-      if (response.statusCode.toString().substring(0) == "4") {
-        print("Response error is ${responseBody.message}");
-        print("Response code is ${response.statusCode}");
+      if (response.statusCode.toString().substring(0, 1) == "4") {
         cardPaymentListener.onError(responseBody.message);
+        return;
       }
       print("Response code is ${response.statusCode}");
       print("Parsed response is ${responseBody.toJson()}");
       print("message is ${responseBody.message}");
     } catch (e) {
       print("Error is ${e.toString()}");
+      print("Error instance is $e");
+      cardPaymentListener.onError(e.toString());
     }
   }
 }
