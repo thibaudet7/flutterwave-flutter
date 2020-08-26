@@ -8,17 +8,18 @@ class Authorization {
   String pin;
   String endpoint;
   String redirect;
+  String otp;
   List<dynamic> fields;
 
   Authorization({this.mode, this.endpoint});
-
-
+  
   Authorization.fromJson(Map<String, dynamic> json) {
     this.mode = json['mode'];
     this.endpoint = json['endpoint'];
     this.fields = json["fields"];
     this.redirect = json["redirect"];
     this.pin = json["pin"];
+    this.otp = json["otp"];
   }
 
   Map<String, dynamic> toJson() {
@@ -28,6 +29,7 @@ class Authorization {
     data["fields"] = this.fields;
     data["redirect"] = this.redirect;
     data["pin"] = this.pin;
+    data["otp"] = this.otp;
     return data;
   }
 

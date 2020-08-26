@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 
-class RequestPin extends StatefulWidget {
-  final FlutterwavePaymentManager _paymentManager;
+class RequestOTP extends StatefulWidget {
+  final String descriptionText;
 
-  RequestPin(this._paymentManager);
+  RequestOTP(this.descriptionText);
 
   @override
-  _RequestPinState createState() => _RequestPinState();
+  _RequestOTPState createState() => _RequestOTPState();
 }
 
-class _RequestPinState extends State<RequestPin> {
+class _RequestOTPState extends State<RequestOTP> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _pinController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +21,13 @@ class _RequestPinState extends State<RequestPin> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Text(
+            this.widget.descriptionText,
+            style: TextStyle(color: Colors.black, fontSize: 18),
+          ),
+          SizedBox(
+            height: 30,
+          ),
           Container(
             margin: EdgeInsets.all(5),
             child: TextFormField(
@@ -38,7 +45,7 @@ class _RequestPinState extends State<RequestPin> {
                 color: Colors.black,
                 fontSize: 20.0,
               ),
-              controller: this._pinController,
+              controller: this._otpController,
               validator: this._pinValidator,
             ),
           ),
@@ -58,15 +65,13 @@ class _RequestPinState extends State<RequestPin> {
   }
 
   String _pinValidator(String value) {
-    return value.trim().isEmpty ? "Pin is required" : null;
+    return value.trim().isEmpty ? "Otp is required" : null;
   }
 
   void _continuePayment() {
     if (this._formKey.currentState.validate()) {
-      //TODO
-      print("Pin is ${this._pinController.value.text}");
-      this.widget._paymentManager.addPin(this._pinController.value.text);
-      Navigator.of(this.context).pop("stuff");
+      print("Pin is ${this._otpController.value.text}");
+      Navigator.of(this.context).pop(this._otpController.value.text);
     }
   }
 }

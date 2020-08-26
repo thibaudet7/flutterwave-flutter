@@ -92,7 +92,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                       height: 50.0,
                       child: FlutterwavePaymentOption(
                         handleClick: this._launchCardPaymentWidget,
-                        buttonText: "card",
+                        buttonText: "Card",
                       ),
                     ),
                     SizedBox(
@@ -102,7 +102,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                       height: 50.0,
                       child: FlutterwavePaymentOption(
                         handleClick: () => {},
-                        buttonText: "bank transfer",
+                        buttonText: "Bank Transfer",
                       ),
                     ),
                     SizedBox(
@@ -112,7 +112,17 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                       height: 50.0,
                       child: FlutterwavePaymentOption(
                         handleClick: () => {},
-                        buttonText: "ussd",
+                        buttonText: "USSD",
+                      ),
+                    ),
+                    SizedBox(
+                      height: 0.5,
+                    ),
+                    SizedBox(
+                      height: 50.0,
+                      child: FlutterwavePaymentOption(
+                        handleClick: () => {},
+                        buttonText: "Barter",
                       ),
                     ),
                   ],

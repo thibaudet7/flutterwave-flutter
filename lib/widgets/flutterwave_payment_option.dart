@@ -21,7 +21,7 @@ class FlutterwavePaymentOption extends StatelessWidget {
             style: TextStyle(fontSize: 17, color: Colors.black),
             children: [
               TextSpan(
-                text: buttonText.toUpperCase(),
+                text: buttonText,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
