@@ -25,6 +25,7 @@ class ChargeCardRequest {
     @required this.fullName,
     @required this.txRef,
     this.redirectUrl = "",
+    this.authorization
   });
 
   Map<String, dynamic> toJson() {
@@ -38,7 +39,10 @@ class ChargeCardRequest {
       "email": this.email,
       "fullname": this.fullName,
       "tx_ref": this.txRef,
-      "redirect_url": this.redirectUrl
+      "redirect_url": this.redirectUrl,
+      "authorization": this.authorization == null
+          ? Authorization().toJson()
+          : this.authorization.toJson()
     };
   }
 }

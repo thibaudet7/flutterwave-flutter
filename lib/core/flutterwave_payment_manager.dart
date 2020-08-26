@@ -21,6 +21,7 @@ class FlutterwavePaymentManager {
   bool isDebugMode;
 
   ChargeCardRequest chargeCardRequest;
+  CardPaymentListener cardPaymentListener;
 
   FlutterwavePaymentManager({
     @required this.publicKey,
@@ -44,11 +45,19 @@ class FlutterwavePaymentManager {
   Future<dynamic> payWithCard(final http.Client client,
       final ChargeCardRequest chargeCardRequest,
       final CardPaymentListener cardPaymentListener) async {
+
     this.chargeCardRequest = chargeCardRequest;
+    this.cardPaymentListener = cardPaymentListener;
+
+    if (this.cardPaymentListener == null) {
+      this.cardPaymentListener.onError("No CardPaymentListener Attached!");
+      return;
+    }
+
     final Map<String, String> encryptedPayload =
         this._prepareRequest(chargeCardRequest);
 
-    print("Encryptes response is $encryptedPayload");
+    print("Encrypted response is $encryptedPayload");
 
     final url = FlutterwaveUtils.BASE_URL + FlutterwaveUtils.CHARGE_CARD_URL;
     final http.Response response = await client.post(url,
@@ -62,26 +71,26 @@ class FlutterwavePaymentManager {
           responseBody.meta.authorization != null) {
         switch (responseBody.meta.authorization.mode) {
           case Authorization.AVS: {
-              cardPaymentListener.onRequireAddress();
+              this.cardPaymentListener.onRequireAddress();
               break;
             }
           case Authorization.REDIRECT: {
-              cardPaymentListener.onRedirect(responseBody.meta.authorization.redirect);
+              this.cardPaymentListener.onRedirect(responseBody.meta.authorization.redirect);
               break;
             }
           case Authorization.OTP: {
-              cardPaymentListener.onRequireOTP();
+              this.cardPaymentListener.onRequireOTP();
               break;
             }
           case Authorization.PIN: {
-              cardPaymentListener.onRequirePin();
+              this.cardPaymentListener.onRequirePin();
               break;
             }
         }
         return;
       }
       if (response.statusCode.toString().substring(0, 1) == "4") {
-        cardPaymentListener.onError(responseBody.message);
+        this.cardPaymentListener.onError(responseBody.message);
         return;
       }
       print("Response code is ${response.statusCode}");
@@ -90,7 +99,30 @@ class FlutterwavePaymentManager {
     } catch (e) {
       print("Error is ${e.toString()}");
       print("Error instance is $e");
-      cardPaymentListener.onError(e.toString());
+      this.cardPaymentListener.onError(e.toString());
     }
+  }
+
+  Future<dynamic> addPin(String pin) async {
+    Authorization auth = this.chargeCardRequest.authorization;
+    if (auth == null) {
+      auth = Authorization();
+      this.chargeCardRequest.authorization = auth;
+    }
+    auth.mode = Authorization.PIN;
+    auth.pin = pin;
+//    final Map<String, String> updatedPayload = this._prepareRequest(this.chargeCardRequest);
+    this.payWithCard(http.Client(), this.chargeCardRequest, this.cardPaymentListener);
+//    try {
+//      final url = FlutterwaveUtils.BASE_URL + FlutterwaveUtils.CHARGE_CARD_URL;
+//      final http.Response response = await http.post(url,
+//          headers: {HttpHeaders.authorizationHeader: this.publicKey},
+//          body: updatedPayload);
+//      final responseBody =
+//      ChargeCardResponse.fromJson(jsonDecode(response.body));
+//      print("Response updated is ${responseBody.toJson()}");
+//    } catch (e) {
+//      print("Response error is $e");
+//    }
   }
 }

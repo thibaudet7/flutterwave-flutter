@@ -18,6 +18,7 @@ class Authorization {
     this.endpoint = json['endpoint'];
     this.fields = json["fields"];
     this.redirect = json["redirect"];
+    this.pin = json["pin"];
   }
 
   Map<String, dynamic> toJson() {
@@ -26,6 +27,7 @@ class Authorization {
     data["endpoint"] = this.endpoint;
     data["fields"] = this.fields;
     data["redirect"] = this.redirect;
+    data["pin"] = this.pin;
     return data;
   }
 

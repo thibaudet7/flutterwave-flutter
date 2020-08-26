@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
+import 'package:flutterwave/widgets/request_pin.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 import 'package:flutterwave/models/requests/charge_card_request.dart';
 
 class CardPayment extends StatefulWidget {
-  CardPayment(this.paymentManager);
 
-  final FlutterwavePaymentManager paymentManager;
+  final FlutterwavePaymentManager _paymentManager;
+
+  CardPayment(this._paymentManager);
 
   @override
   _CardPaymentState createState() => _CardPaymentState();
@@ -165,6 +167,7 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   void _onCardFormClick() {
+    this._hideKeyboard();
     if (this._cardFormKey.currentState.validate()) {
       this.showConfirmPaymentModal();
     }
@@ -172,19 +175,19 @@ class _CardPaymentState extends State<CardPayment>
 
   void _makeCardPayment() {
     Navigator.of(this.context).pop();
-    // show loading indicator
+    //TODO show loading indicator
     final ChargeCardRequest chargeCardRequest = ChargeCardRequest(
         cardNumber: this._cardNumberFieldController.value.text,
         cvv: this._cardCvvFieldController.value.text,
         expiryMonth: this._cardMonthFieldController.value.text,
         expiryYear: this._cardYearFieldController.value.text,
-        currency: this.widget.paymentManager.currency,
-        amount: this.widget.paymentManager.amount,
-        email: this.widget.paymentManager.email,
-        fullName: this.widget.paymentManager.fullName,
-        txRef: this.widget.paymentManager.txRef);
+        currency: this.widget._paymentManager.currency,
+        amount: this.widget._paymentManager.amount,
+        email: this.widget._paymentManager.email,
+        fullName: this.widget._paymentManager.fullName,
+        txRef: this.widget._paymentManager.txRef);
     final client = http.Client();
-    this.widget.paymentManager.payWithCard(client, chargeCardRequest, this);
+    this.widget._paymentManager.payWithCard(client, chargeCardRequest, this);
   }
 
   Future<void> showConfirmPaymentModal() async {
@@ -194,7 +197,7 @@ class _CardPaymentState extends State<CardPayment>
         builder: (BuildContext buildContext) {
           return AlertDialog(
             content: Text(
-              "You will be charged a total of ${this.widget.paymentManager.amount} NGN. Do you wish to continue? ",
+              "You will be charged a total of ${this.widget._paymentManager.amount} NGN. Do you wish to continue? ",
               textAlign: TextAlign.start,
               style: TextStyle(
                 color: Colors.black,
@@ -214,31 +217,23 @@ class _CardPaymentState extends State<CardPayment>
         });
   }
 
-  Future<void> showErrorModal(final String error) async {
+  String _validateCardField(String value) {
+    return value.trim().isEmpty ? "Please fill this" : null;
+  }
+
+  void _hideKeyboard() {
+    FocusScope.of(this.context).requestFocus(FocusNode());
+  }
+
+  Future<dynamic> openAuthModal() async {
     return showDialog(
         context: this.context,
         barrierDismissible: false,
         builder: (BuildContext buildContext) {
           return AlertDialog(
-            content: Text(
-              error,
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-            actions: [
-              FlatButton(
-                onPressed: () => {Navigator.of(this.context).pop()},
-                child: Text("OK"),
-              )
-            ],
+            content: RequestPin(this.widget._paymentManager)
           );
         });
-  }
-
-  String _validateCardField(String value) {
-    return value.trim().isEmpty ? "Please fill this" : null;
   }
 
   @override
@@ -260,9 +255,11 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   @override
-  void onRequirePin() {
+  void onRequirePin() async {
     // TODO: open pin widget
     print("Require pin called in Widget");
+    final result = await this.openAuthModal();
+    print("Result after opening is $result");
   }
 
   @override
