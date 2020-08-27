@@ -50,19 +50,29 @@ class _CardPaymentState extends State<CardPayment>
         body: Form(
           key: this._cardFormKey,
           child: Container(
-            margin: EdgeInsets.fromLTRB(10, 30, 10, 10),
+            margin: EdgeInsets.fromLTRB(10, 50, 10, 10),
             width: double.infinity,
             child: Column(
               children: [
                 Container(
                   margin: EdgeInsets.all(20),
+                  alignment: Alignment.topCenter,
+                  width: double.infinity,
+                  child: Text(
+                    "Enter your card details",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
                   width: double.infinity,
                   child: TextFormField(
                     decoration: InputDecoration(
                       hintText: "Card Number",
-                      labelStyle: TextStyle(
-                        color: Colors.black,
-                      ),
+                      labelText: "Card Number",
                     ),
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
@@ -79,13 +89,11 @@ class _CardPaymentState extends State<CardPayment>
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width / 5,
-                      margin: EdgeInsets.all(20),
+                      margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
                           hintText: "Month",
-                          labelStyle: TextStyle(
-                            color: Colors.black26,
-                          ),
+                          labelText: "Month",
                         ),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
@@ -100,13 +108,11 @@ class _CardPaymentState extends State<CardPayment>
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width / 5,
-                      margin: EdgeInsets.all(20),
+                      margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
                           hintText: "Year",
-                          labelStyle: TextStyle(
-                            color: Colors.black26,
-                          ),
+                          labelText: "Year",
                         ),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
@@ -121,16 +127,15 @@ class _CardPaymentState extends State<CardPayment>
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width / 5,
-                      margin: EdgeInsets.fromLTRB(30, 20, 5, 20),
+                      margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          hintText: "CVV",
-                          labelStyle: TextStyle(
-                            color: Colors.black26,
-                          ),
+                          hintText: "cvv",
+                          labelText: "cvv",
                         ),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
+                        obscureText: true,
                         autocorrect: false,
                         style: TextStyle(
                           color: Colors.black,
@@ -233,7 +238,7 @@ class _CardPaymentState extends State<CardPayment>
         context: this.context,
         barrierDismissible: false,
         builder: (BuildContext buildContext) {
-          return AlertDialog(content: RequestPin(this.widget._paymentManager));
+          return AlertDialog(content: RequestPin());
         });
   }
 
@@ -254,7 +259,10 @@ class _CardPaymentState extends State<CardPayment>
     final flwRef = await await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => AuthorizationWebview(Uri.encodeFull(url))));
     if (flwRef != null) {
-      final response = await this.widget._paymentManager.verifyPayment(flwRef, http.Client());
+      final response = await this
+          .widget
+          ._paymentManager
+          .verifyPayment(flwRef, http.Client());
       print("Success?? ${response.message}");
     }
   }
@@ -274,7 +282,9 @@ class _CardPaymentState extends State<CardPayment>
   @override
   void onRequirePin(ChargeCardResponse response) async {
     print("Require pin called in Widget");
-    final pin = await this.openAuthModal();
+//    final pin = await this.openAuthModal();
+    final pin = await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => RequestPin()));
     if (pin == null) return;
     this.widget._paymentManager.addPin(pin);
   }
@@ -282,7 +292,8 @@ class _CardPaymentState extends State<CardPayment>
   @override
   void onRequireOTP(ChargeCardResponse response, String message) async {
     print("Require OTP called in Widget");
-    final otp = await this.openOTPModal(message: message);
+    final otp = await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => RequestOTP(message)));
     if (otp == null) return;
     final client = http.Client();
     this
