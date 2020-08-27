@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
-import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
-import 'package:flutterwave/widgets/card_payment.dart';
+import 'package:flutterwave/widgets/card_payment/card_payment.dart';
 
 import 'flutterwave_payment_option.dart';
 
@@ -136,6 +135,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
   }
 
   void _launchCardPaymentWidget() {
+    print("_launchCardPaymentWidget called");
     Navigator.push(
       this.context,
       MaterialPageRoute(builder: (context) => CardPayment(widget.paymentManager)),

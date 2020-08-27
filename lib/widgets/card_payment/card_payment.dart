@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutterwave/models/requests/charge_request_address.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
-import 'package:flutterwave/models/responses/charge_card_response/charge_card_response.dart';
-import 'package:flutterwave/widgets/request_otp.dart';
-import 'package:flutterwave/widgets/request_pin.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
+import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
 import 'package:flutterwave/models/requests/charge_card_request.dart';
+import 'package:flutterwave/models/responses/charge_card_response/charge_card_response.dart';
+import 'package:flutterwave/widgets/card_payment/request_address.dart';
+
+import 'request_otp.dart';
+import 'request_pin.dart';
 
 class CardPayment extends StatefulWidget {
-
   final FlutterwavePaymentManager _paymentManager;
 
   CardPayment(this._paymentManager);
@@ -58,7 +59,6 @@ class _CardPaymentState extends State<CardPayment>
                   child: TextFormField(
                     decoration: InputDecoration(
                       hintText: "Card Number",
-//                  labelText: "Card Number",
                       labelStyle: TextStyle(
                         color: Colors.black,
                       ),
@@ -227,25 +227,21 @@ class _CardPaymentState extends State<CardPayment>
     FocusScope.of(this.context).requestFocus(FocusNode());
   }
 
-  Future<dynamic> openAuthModal() async {
+  Future<String> openAuthModal() async {
     return showDialog(
         context: this.context,
         barrierDismissible: false,
         builder: (BuildContext buildContext) {
-          return AlertDialog(
-            content: RequestPin(this.widget._paymentManager)
-          );
+          return AlertDialog(content: RequestPin(this.widget._paymentManager));
         });
   }
 
-  Future<dynamic> openOTPModal({String message}) async {
+  Future<String> openOTPModal({String message}) async {
     return showDialog(
         context: this.context,
         barrierDismissible: false,
         builder: (BuildContext buildContext) {
-          return AlertDialog(
-              content: RequestOTP(message)
-          );
+          return AlertDialog(content: RequestOTP(message));
         });
   }
 
@@ -256,25 +252,38 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   @override
-  void onRequireAddress(ChargeCardResponse response) {
-    // TODO: implement onRequireAddress
-    print("Require Address called in Widget");
+  void onRequireAddress(ChargeCardResponse response) async {
+    print("Open Address called in Widget.");
+    final ChargeRequestAddress addressDetails = await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => RequestAddress()));
+    if (addressDetails != null) {
+      print("Require address returned ${addressDetails.toJson()}");
+      this.widget._paymentManager.addAddress(addressDetails);
+      return;
+    }
+    print("Require address returned null");
   }
 
   @override
   void onRequirePin(ChargeCardResponse response) async {
     print("Require pin called in Widget");
-    final result = await this.openAuthModal();
-    print("Result after opening is $result");
+    final pin = await this.openAuthModal();
+    if (pin == null) return;
+    this.widget._paymentManager.addPin(pin);
+    print("Result after opening is $pin");
   }
 
   @override
-  void onRequireOTP(ChargeCardResponse response, String message ) async{
+  void onRequireOTP(ChargeCardResponse response, String message) async {
     // TODO: open OTP widget
     print("Require OTP called in Widget");
     final otp = await this.openOTPModal(message: message);
+    if (otp == null) return;
     final client = http.Client();
-    this.widget._paymentManager.validatePayment(otp, response.data.flwRef, client);
+    this
+        .widget
+        ._paymentManager
+        .validatePayment(otp, response.data.flwRef, client);
   }
 
   @override
@@ -288,6 +297,4 @@ class _CardPaymentState extends State<CardPayment>
     this._scaffoldKey.currentState.showSnackBar(snackBar);
     print("On Error called in Widget => $error");
   }
-
-
 }

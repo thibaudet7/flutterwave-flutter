@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutterwave/models/requests/charge_request_address.dart';
 import 'package:flutterwave/models/requests/validate_charge_request.dart';
 import 'package:flutterwave/models/requests/verify_charge_request.dart';
 import 'package:http/http.dart' as http;
@@ -211,6 +212,20 @@ class FlutterwavePaymentManager {
     Authorization auth = Authorization();
     auth.mode = Authorization.PIN;
     auth.pin = pin;
+    this.chargeCardRequest.authorization = auth;
+    this.payWithCard(
+        http.Client(), this.chargeCardRequest, this.cardPaymentListener);
+  }
+
+  Future<dynamic> addAddress(ChargeRequestAddress chargeAddress) async {
+    Authorization auth = Authorization();
+    auth.mode = Authorization.AVS;
+    auth.address = chargeAddress.address;
+    auth.city = chargeAddress.city;
+    auth.state = chargeAddress.state;
+    auth.zipcode = chargeAddress.zipCode;
+    auth.country = chargeAddress.country;
+
     this.chargeCardRequest.authorization = auth;
     this.payWithCard(
         http.Client(), this.chargeCardRequest, this.cardPaymentListener);

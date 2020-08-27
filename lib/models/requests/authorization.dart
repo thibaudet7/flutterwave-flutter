@@ -9,6 +9,11 @@ class Authorization {
   String endpoint;
   String redirect;
   String otp;
+  String address;
+  String city;
+  String state;
+  String zipcode;
+  String country;
   List<dynamic> fields;
 
   Authorization({this.mode, this.endpoint});
@@ -20,6 +25,11 @@ class Authorization {
     this.redirect = json["redirect"];
     this.pin = json["pin"];
     this.otp = json["otp"];
+    this.address = json["address"];
+    this.city = json["city"];
+    this.state = json["state"];
+    this.zipcode = json["zipcode"];
+    this.country = json["country"];
   }
 
   Map<String, dynamic> toJson() {
@@ -30,6 +40,11 @@ class Authorization {
     data["redirect"] = this.redirect;
     data["pin"] = this.pin;
     data["otp"] = this.otp;
+    data["address"] = this.address;
+    data["city"] = this.city;
+    data["state"] = this.state;
+    data["zipcode"] = this.zipcode;
+    data["country"] = this.country;
     return data;
   }
 

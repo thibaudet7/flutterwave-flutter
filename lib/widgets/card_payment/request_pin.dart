@@ -65,8 +65,8 @@ class _RequestPinState extends State<RequestPin> {
     if (this._formKey.currentState.validate()) {
       //TODO
       print("Pin is ${this._pinController.value.text}");
-      this.widget._paymentManager.addPin(this._pinController.value.text);
-      Navigator.of(this.context).pop("stuff");
+//      this.widget._paymentManager.addPin(this._pinController.value.text);
+      Navigator.of(this.context).pop(this._pinController.value.text);
     }
   }
 }
