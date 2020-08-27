@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutterwave/models/requests/charge_request_address.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutterwave/models/requests/charge_request_address.dart';
+import 'package:flutterwave/widgets/card_payment/authorization_webview.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
 import 'package:flutterwave/models/requests/charge_card_request.dart';
@@ -246,9 +247,16 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   @override
-  void onRedirect(ChargeCardResponse response, String url) {
-    // TODO: implement onRedirect
+  void onRedirect(ChargeCardResponse response, String url) async {
     print("Redirect called in Widget. URL => $url");
+    final removeSpace = url.replaceAll(new RegExp(r"\s+"), "");
+    print("Redirect remove space => $removeSpace");
+    final flwRef = await await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => AuthorizationWebview(Uri.encodeFull(url))));
+    if (flwRef != null) {
+      final response = await this.widget._paymentManager.verifyPayment(flwRef, http.Client());
+      print("Success?? ${response.message}");
+    }
   }
 
   @override
@@ -261,7 +269,6 @@ class _CardPaymentState extends State<CardPayment>
       this.widget._paymentManager.addAddress(addressDetails);
       return;
     }
-    print("Require address returned null");
   }
 
   @override
@@ -270,12 +277,10 @@ class _CardPaymentState extends State<CardPayment>
     final pin = await this.openAuthModal();
     if (pin == null) return;
     this.widget._paymentManager.addPin(pin);
-    print("Result after opening is $pin");
   }
 
   @override
   void onRequireOTP(ChargeCardResponse response, String message) async {
-    // TODO: open OTP widget
     print("Require OTP called in Widget");
     final otp = await this.openOTPModal(message: message);
     if (otp == null) return;

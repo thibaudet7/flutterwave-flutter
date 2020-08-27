@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutterwave/models/requests/authorization.dart';
 import 'package:flutterwave/models/requests/charge_request_address.dart';
 import 'package:flutterwave/models/requests/validate_charge_request.dart';
 import 'package:flutterwave/models/requests/verify_charge_request.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-
-import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
-import 'package:flutterwave/models/requests/authorization.dart';
 import 'package:flutterwave/models/responses/charge_card_response/charge_card_response.dart';
-import 'package:flutterwave/models/requests/charge_card_request.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
+import 'package:flutterwave/models/requests/charge_card_request.dart';
+
+import 'interfaces/card_payment_listener.dart';
 
 class FlutterwavePaymentManager {
   String publicKey;
@@ -20,7 +20,6 @@ class FlutterwavePaymentManager {
   String email;
   String fullName;
   String txRef;
-  String redirectUrl;
   bool isDebugMode;
 
   ChargeCardRequest chargeCardRequest;
@@ -35,7 +34,6 @@ class FlutterwavePaymentManager {
     @required this.fullName,
     @required this.txRef,
     @required this.isDebugMode,
-    this.redirectUrl,
   });
 
   Map<String, String> _prepareRequest(
@@ -190,18 +188,17 @@ class FlutterwavePaymentManager {
       if (response.statusCode == 200) {
         if (cardResponse.status == FlutterwaveUtils.SUCCESS &&
             cardResponse.data.amount == this.chargeCardRequest.amount &&
-            cardResponse.data.currency == this.chargeCardRequest.currency) {
+            cardResponse.data.currency == this.chargeCardRequest.currency &&
+            cardResponse.data.txRef == this.chargeCardRequest.txRef
+        ) {
           print("verification successful ${cardResponse.toJson()}");
         }
       }
-
       if (response.statusCode.toString().substring(0, 1) == "4") {
         this.cardPaymentListener.onError(cardResponse.message);
       }
-
       print("verify response status ${response.statusCode}");
       print("verify response body ${jsonEncode(response.body)}");
-
       return cardResponse;
     } catch (error) {
       throw (error);

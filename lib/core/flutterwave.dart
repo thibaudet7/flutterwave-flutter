@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutterwave/widgets/card_payment/flutterwave_payment.dart';
 
 import 'flutterwave_payment_manager.dart';
-import 'interfaces/card_payment_listener.dart';
 
 class Flutterwave {
   BuildContext context;
@@ -36,7 +35,6 @@ class Flutterwave {
     @required this.fullName,
     @required this.txRef,
     @required this.isDebugMode,
-    this.redirectUrl = "",
     this.acceptAccountPayment = false,
     this.acceptBankTransferPayment = false,
     this.acceptCardPayment = false,
