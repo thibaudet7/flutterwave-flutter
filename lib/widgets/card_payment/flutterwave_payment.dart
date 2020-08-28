@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutterwave/core/card_payment_manager/card_payment_manager.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 import 'package:flutterwave/widgets/card_payment/card_payment.dart';
 
 import 'flutterwave_payment_option.dart';
 
 class FlutterwaveUI extends StatefulWidget {
-  final FlutterwavePaymentManager paymentManager;
+  final FlutterwavePaymentManager _flutterwavePaymentManager;
 
-  FlutterwaveUI(this.paymentManager);
+  FlutterwaveUI(this._flutterwavePaymentManager);
 
   @override
   _FlutterwaveUIState createState() => _FlutterwaveUIState();
@@ -135,10 +136,10 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
   }
 
   void _launchCardPaymentWidget() {
-    print("_launchCardPaymentWidget called");
+    final CardPaymentManager cardPaymentManager = this.widget._flutterwavePaymentManager.getCardPaymentManager();
     Navigator.push(
       this.context,
-      MaterialPageRoute(builder: (context) => CardPayment(widget.paymentManager)),
+      MaterialPageRoute(builder: (context) => CardPayment(cardPaymentManager)),
     );
   }
 }
