@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutterwave/models/requests/bank_transfer/bank_transfer_request.dart';
 import 'package:flutterwave/models/responses/bank_transfer_response/bank_transfer_response.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:flutterwave/widgets/bank_transfer/show_transfer_details.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutterwave/core/bank_transfer_manager/bank_transfer_payment_manager.dart';
 import 'package:flutterwave/widgets/bank_transfer/pay_with_account_button.dart';
 
@@ -20,6 +20,10 @@ class BankTransfer extends StatefulWidget {
 
 class _BankTransferState extends State<BankTransfer> {
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  BuildContext loadingDialogContext;
+
   BankTransferResponse _bankTransferResponse;
   bool hasInitiatedPay = false;
   bool hasVerifiedPay = false;
@@ -28,6 +32,7 @@ class _BankTransferState extends State<BankTransfer> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        key: this._scaffoldKey,
           appBar: AppBar(
             backgroundColor: Hexcolor("#fff1d0"),
             title: RichText(
@@ -63,7 +68,7 @@ class _BankTransferState extends State<BankTransfer> {
   }
 
   void _initiateBankTransfer() async {
-    //todo show initiating payment loader
+    this.showLoading("initiating payment...");
     final http.Client client = http.Client();
     final BankTransferRequest request = BankTransferRequest(
         amount: this.widget._paymentManager.amount,
@@ -79,14 +84,14 @@ class _BankTransferState extends State<BankTransfer> {
     try {
       final BankTransferResponse response =
       await this.widget._paymentManager.payWithBankTransfer(request, client);
-      //
       if (FlutterwaveUtils.SUCCESS == response.status) {
-        //todo hide loader
         this._afterChargeInitiated(response);
-        //todo show other screen for payment verification
       }
     } catch(error) {
-
+      this.showSnackBar(error.toString());
+    }
+    finally {
+      this.closeDialog();
     }
   }
 
@@ -103,5 +108,49 @@ class _BankTransferState extends State<BankTransfer> {
       this._bankTransferResponse = response;
       this.hasInitiatedPay = true;
     });
+  }
+
+  void showSnackBar(String message) {
+    SnackBar snackBar = SnackBar(
+      content: Text(
+        message,
+        textAlign: TextAlign.center,
+      ),
+    );
+    this._scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  Future<void> showLoading(String message) {
+    return showDialog(
+      context: this.context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        this.loadingDialogContext = context;
+        return AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(
+                backgroundColor: Colors.orangeAccent,
+              ),
+              SizedBox(
+                width: 40,
+              ),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void closeDialog() {
+    if (this.loadingDialogContext != null) {
+      Navigator.of(this.loadingDialogContext).pop();
+      this.loadingDialogContext = null;
+    }
   }
 }
