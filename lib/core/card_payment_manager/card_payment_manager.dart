@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutterwave/core/flutterwave_error.dart';
 import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
 import 'package:flutterwave/models/requests/charge_card/charge_request_address.dart';
 import 'package:http/http.dart' as http;

@@ -1,12 +1,13 @@
 class BankTransferRequest {
   String amount;
   String currency;
-  int duration;
+  String duration;
   String email;
-  int frequency;
-  bool isPermanent;
+  String frequency;
+  String isPermanent;
   String narration;
   String txRef;
+  String phoneNumber;
 
   BankTransferRequest({
     this.amount,
@@ -17,6 +18,7 @@ class BankTransferRequest {
     this.isPermanent,
     this.narration,
     this.txRef,
+    this.phoneNumber
   });
 
   BankTransferRequest.fromJson(Map<String, dynamic> json) {
@@ -28,18 +30,20 @@ class BankTransferRequest {
     this.isPermanent = json['is_permanent'];
     this.narration = json['narration'];
     this.txRef = json['tx_ref'];
+    this.phoneNumber = json["phone_number"];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['amount'] = this.amount;
-    data['currency'] = this.currency;
-    data['duration'] = this.duration;
-    data['email'] = this.email;
-    data['frequency'] = this.frequency;
-    data['is_permanent'] = this.isPermanent;
-    data['narration'] = this.narration;
-    data['tx_ref'] = this.txRef;
-    return data;
+    return {
+      'amount': this.amount,
+      'currency': this.currency,
+      'duration': this.duration,
+      'email': this.email,
+      'frequency': this.frequency,
+      'is_permanent': this.isPermanent,
+      'narration': this.narration,
+      'tx_ref': this.txRef,
+      'phone_number': this.phoneNumber
+    };
   }
 }

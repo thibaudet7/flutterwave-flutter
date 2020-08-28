@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterwave/widgets/card_payment/flutterwave_payment.dart';
+import 'package:flutterwave/widgets/home/flutterwave_payment.dart';
 
 import 'flutterwave_payment_manager.dart';
 

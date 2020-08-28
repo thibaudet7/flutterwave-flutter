@@ -1,14 +1,14 @@
 
 import 'bank_transfer_meta.dart';
 
-class BankTranferResponse {
+class BankTransferResponse {
   String status;
   String message;
   BankTransferMeta meta;
 
-  BankTranferResponse({this.status, this.message, this.meta});
+  BankTransferResponse({this.status, this.message, this.meta});
 
-  BankTranferResponse.fromJson(Map<String, dynamic> json) {
+  BankTransferResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
     meta = json['meta'] != null ? new BankTransferMeta.fromJson(json['meta']) : null;
