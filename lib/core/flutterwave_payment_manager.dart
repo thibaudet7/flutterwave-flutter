@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutterwave/models/requests/charge_card/charge_request_address.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutterwave/models/requests/authorization.dart';
-import 'package:flutterwave/models/requests/charge_request_address.dart';
-import 'package:flutterwave/models/requests/validate_charge_request.dart';
+import 'package:flutterwave/models/requests/charge_card/validate_charge_request.dart';
 import 'package:flutterwave/models/requests/verify_charge_request.dart';
 import 'package:flutterwave/models/responses/charge_card_response/charge_card_response.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
-import 'package:flutterwave/models/requests/charge_card_request.dart';
+import 'package:flutterwave/models/requests/charge_card/charge_card_request.dart';
 
 import 'interfaces/card_payment_listener.dart';
 
@@ -21,6 +21,11 @@ class FlutterwavePaymentManager {
   String fullName;
   String txRef;
   bool isDebugMode;
+  String phoneNumber;
+  int frequency;
+  int duration;
+  bool isPermanent;
+  String narration;
 
   ChargeCardRequest chargeCardRequest;
   CardPaymentListener cardPaymentListener;
@@ -34,6 +39,11 @@ class FlutterwavePaymentManager {
     @required this.fullName,
     @required this.txRef,
     @required this.isDebugMode,
+    this.phoneNumber,
+    this.frequency,
+    this.duration,
+    this.isPermanent,
+    this.narration,
   });
 
   Map<String, String> _prepareRequest(
@@ -173,8 +183,7 @@ class FlutterwavePaymentManager {
         if (cardResponse.status == FlutterwaveUtils.SUCCESS &&
             cardResponse.data.amount == this.chargeCardRequest.amount &&
             cardResponse.data.currency == this.chargeCardRequest.currency &&
-            cardResponse.data.txRef == this.chargeCardRequest.txRef
-        ) {
+            cardResponse.data.txRef == this.chargeCardRequest.txRef) {
           return cardResponse;
         }
       }

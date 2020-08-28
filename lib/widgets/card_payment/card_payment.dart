@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutterwave/models/requests/charge_card/charge_request_address.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutterwave/models/requests/charge_request_address.dart';
 import 'package:flutterwave/widgets/card_payment/authorization_webview.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
-import 'package:flutterwave/models/requests/charge_card_request.dart';
+import 'package:flutterwave/models/requests/charge_card/charge_card_request.dart';
 import 'package:flutterwave/models/responses/charge_card_response/charge_card_response.dart';
 import 'package:flutterwave/widgets/card_payment/request_address.dart';
 
@@ -254,7 +254,7 @@ class _CardPaymentState extends State<CardPayment>
           ._paymentManager
           .verifyPayment(flwRef, http.Client());
       this.closeDialog();
-      if (response.status == "success") {
+      if (response.data.status == "successful") {
         Navigator.pop(this.context, response);
       }
     }
@@ -296,7 +296,7 @@ class _CardPaymentState extends State<CardPayment>
         ._paymentManager
         .validatePayment(otp, response.data.flwRef, client);
     this.closeDialog();
-    if (response.status == "success") {
+    if (response.data.status == "successful") {
       Navigator.pop(this.context, chargeCardResponse);
     }
   }
