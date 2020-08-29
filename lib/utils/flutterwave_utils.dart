@@ -1,7 +1,8 @@
 import 'package:tripledes/tripledes.dart';
 
 class FlutterwaveUtils {
-  static const String BASE_URL = "https://ravesandboxapi.flutterwave.com/v3/sdkcheckout/";
+  static const String _DEBUG_BASE_URL = "https://ravesandboxapi.flutterwave.com/v3/sdkcheckout/";
+  static const String _PROD_BASE_URL = "https://api.ravepay.co/v3/sdkcheckout/";
   static const String CHARGE_CARD_URL = "charges?type=card";
   static const String BANK_TRANSFER = "charges?type=bank_transfer";
   static const String PAY_WITH_ACCOUNT = "charges?type=debit_ng_account";
@@ -24,5 +25,9 @@ class FlutterwaveUtils {
 
   static Map<String, String> encryptRequest(String encryptedData) {
     return { "client": encryptedData };
+  }
+
+  static String getBaseUrl(final bool isDebugMode) {
+    return isDebugMode ? _DEBUG_BASE_URL : _PROD_BASE_URL;
   }
 }

@@ -3,14 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/flutterwave_error.dart';
+import 'package:flutterwave/models/requests/bank_transfer/bank_transfer_request.dart';
+import 'package:flutterwave/models/requests/pay_with_bank_account/pay_with_bank_account.dart';
 import 'package:flutterwave/models/requests/verify_charge_request.dart';
-import 'package:flutterwave/models/responses/bank_transfer_response/bank_transfer_response.dart';
 import 'package:flutterwave/models/responses/charge_card_response.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutterwave/models/requests/bank_transfer/bank_transfer_request.dart';
 
-class BankTransferPaymentManager {
+class BankAccountPaymentManager {
   String publicKey;
   String currency;
   String amount;
@@ -18,12 +18,11 @@ class BankTransferPaymentManager {
   String txRef;
   bool isDebugMode;
   String phoneNumber;
-  int frequency;
-  int duration;
-  bool isPermanent;
-  String narration;
-
-  BankTransferPaymentManager({
+  String accountBank;
+  String accountNumber;
+  
+  
+  BankAccountPaymentManager({
     @required this.publicKey,
     @required this.currency,
     @required this.amount,
@@ -31,30 +30,28 @@ class BankTransferPaymentManager {
     @required this.txRef,
     @required this.isDebugMode,
     @required this.phoneNumber,
-    @required this.frequency,
-    @required this.narration,
-    this.duration,
-    this.isPermanent,
+    @required this.accountBank,
+    @required this.accountNumber,
   });
 
-  Future<BankTransferResponse> payWithBankTransfer(
-      BankTransferRequest bankTransferRequest, http.Client client) async {
-    final requestBody = bankTransferRequest.toJson();
+  Future<ChargeResponse> payWithBankTransfer(
+      BankAccountRequest bankAccountRequest, http.Client client) async {
+    final requestBody = bankAccountRequest.toJson();
 
-    final url = FlutterwaveUtils.getBaseUrl(this.isDebugMode) + FlutterwaveUtils.BANK_TRANSFER;
+    final url = FlutterwaveUtils.getBaseUrl(this.isDebugMode) + FlutterwaveUtils.PAY_WITH_ACCOUNT;
     print("url iss ==> $url");
 
     try {
-      print("Pay With Transfer Request Payload => ${bankTransferRequest.toJson()}");
+      print("Pay With Bank Request Payload => ${bankAccountRequest.toJson()}");
 
       final http.Response response = await client.post(url,
           headers: {HttpHeaders.authorizationHeader: this.publicKey},
           body: requestBody);
 
-      BankTransferResponse bankTransferResponse =
-          BankTransferResponse.fromJson(json.decode(response.body));
+      ChargeResponse bankTransferResponse =
+      ChargeResponse.fromJson(json.decode(response.body));
 
-      print("Pay with transfer response => ${bankTransferResponse.toJson()}");
+      print("Pay with bank response => ${bankTransferResponse.toJson()}");
 
       return bankTransferResponse;
     } catch (error) {
@@ -66,8 +63,8 @@ class BankTransferPaymentManager {
     final url = FlutterwaveUtils.getBaseUrl(this.isDebugMode) + FlutterwaveUtils.VERIFY_TRANSACTION;
     final VerifyChargeRequest verifyRequest = VerifyChargeRequest(flwRef);
     final payload = verifyRequest.toJson();
-    print("Verify Transfer Url => $url");
-    print("Verify Transfer Request Payload => ${verifyRequest.toJson()}");
+    print("Verify Bank Url => $url");
+    print("Verify Bank Request Payload => ${verifyRequest.toJson()}");
     try {
       final http.Response response = await client.post(url,
           headers: {HttpHeaders.authorizationHeader: this.publicKey},
@@ -75,8 +72,8 @@ class BankTransferPaymentManager {
 
       final ChargeResponse cardResponse =
       ChargeResponse.fromJson(jsonDecode(response.body));
-      print("Verify Transfer Response Payload => ${cardResponse.toJson()}");
-      
+      print("Verify Bank Response Payload => ${cardResponse.toJson()}");
+
       return cardResponse;
     } catch (error) {
       throw(FlutterWaveError(error.toString()));
