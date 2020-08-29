@@ -1,4 +1,4 @@
-class BankAccountRequest {
+class BankAccountPaymentRequest {
   String amount;
   String currency;
   String email;
@@ -8,7 +8,7 @@ class BankAccountRequest {
   String accountBank;
   String accountNumber;
 
-  BankAccountRequest(
+  BankAccountPaymentRequest(
       {this.amount,
       this.currency,
       this.email,
@@ -18,7 +18,7 @@ class BankAccountRequest {
       this.accountNumber,
       this.accountBank});
 
-  BankAccountRequest.fromJson(Map<String, dynamic> json) {
+  BankAccountPaymentRequest.fromJson(Map<String, dynamic> json) {
     this.amount = json['amount'];
     this.currency = json['currency'];
     this.email = json['email'];

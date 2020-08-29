@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/flutterwave_error.dart';
-import 'package:flutterwave/models/requests/bank_transfer/bank_transfer_request.dart';
 import 'package:flutterwave/models/requests/pay_with_bank_account/pay_with_bank_account.dart';
 import 'package:flutterwave/models/requests/verify_charge_request.dart';
 import 'package:flutterwave/models/responses/charge_card_response.dart';
@@ -20,6 +19,7 @@ class BankAccountPaymentManager {
   String phoneNumber;
   String accountBank;
   String accountNumber;
+  String fullName;
   
   
   BankAccountPaymentManager({
@@ -32,10 +32,11 @@ class BankAccountPaymentManager {
     @required this.phoneNumber,
     @required this.accountBank,
     @required this.accountNumber,
+    @required this.fullName
   });
 
-  Future<ChargeResponse> payWithBankTransfer(
-      BankAccountRequest bankAccountRequest, http.Client client) async {
+  Future<ChargeResponse> payWithAccount(
+      BankAccountPaymentRequest bankAccountRequest, http.Client client) async {
     final requestBody = bankAccountRequest.toJson();
 
     final url = FlutterwaveUtils.getBaseUrl(this.isDebugMode) + FlutterwaveUtils.PAY_WITH_ACCOUNT;
@@ -43,19 +44,17 @@ class BankAccountPaymentManager {
 
     try {
       print("Pay With Bank Request Payload => ${bankAccountRequest.toJson()}");
-
       final http.Response response = await client.post(url,
           headers: {HttpHeaders.authorizationHeader: this.publicKey},
           body: requestBody);
 
       ChargeResponse bankTransferResponse =
       ChargeResponse.fromJson(json.decode(response.body));
-
-      print("Pay with bank response => ${bankTransferResponse.toJson()}");
-
       return bankTransferResponse;
     } catch (error) {
       throw (FlutterError(error.toString()));
+    } finally {
+      client.close();
     }
   }
 
@@ -77,6 +76,8 @@ class BankAccountPaymentManager {
       return cardResponse;
     } catch (error) {
       throw(FlutterWaveError(error.toString()));
+    } finally {
+      client.close();
     }
   }
 }

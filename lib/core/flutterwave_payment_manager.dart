@@ -66,7 +66,7 @@ class FlutterwavePaymentManager {
         duration: this.duration);
   }
 
-  BankAccountPaymentManager getBankAccountrPaymentManager() {
+  BankAccountPaymentManager getBankAccountPaymentManager() {
     return BankAccountPaymentManager(
         publicKey: this.publicKey,
         currency: this.currency,
@@ -75,6 +75,7 @@ class FlutterwavePaymentManager {
         txRef: this.txRef,
         isDebugMode: this.isDebugMode,
         phoneNumber: this.phoneNumber,
+      fullName: this.fullName
     );
   }
 }

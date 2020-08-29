@@ -6,6 +6,7 @@ class FlutterwaveUtils {
   static const String CHARGE_CARD_URL = "charges?type=card";
   static const String BANK_TRANSFER = "charges?type=bank_transfer";
   static const String PAY_WITH_ACCOUNT = "charges?type=debit_ng_account";
+  static const String GET_BANKS_URL = "https://api.ravepay.co/flwv3-pug/getpaidx/api/flwpbf-banks.js?json=1";
 
 
   static const String VALIDATE_CHARGE = "validate-charge";
@@ -16,7 +17,9 @@ class FlutterwaveUtils {
   static const String CHARGE_INITIATED = "Charge initiated";
   static const String REQUIRES_AUTH = "Charge authorization data required";
   static const String SUCCESS = "success";
+  static const String ERROR =   "error";
   static const String SUCCESSFUL = "successful";
+  static const String APPROVED_SUCCESSFULLY =   "Approved successfully";
 
   static String TripleDESEncrypt(dynamic data, String encryptionKey) {
     final blockCipher = BlockCipher(TripleDESEngine(), encryptionKey);
