@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterwave/models/requests/verify_charge_request.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutterwave/models/requests/bank_transfer/bank_transfer_request.dart';
 import 'package:flutterwave/models/responses/bank_transfer_response/bank_transfer_response.dart';
@@ -9,7 +10,6 @@ import 'package:flutterwave/core/bank_transfer_manager/bank_transfer_payment_man
 import 'package:flutterwave/widgets/bank_transfer/pay_with_account_button.dart';
 
 class BankTransfer extends StatefulWidget {
-
   final BankTransferPaymentManager _paymentManager;
 
   BankTransfer(this._paymentManager);
@@ -19,7 +19,6 @@ class BankTransfer extends StatefulWidget {
 }
 
 class _BankTransferState extends State<BankTransfer> {
-
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   BuildContext loadingDialogContext;
@@ -32,7 +31,7 @@ class _BankTransferState extends State<BankTransfer> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        key: this._scaffoldKey,
+          key: this._scaffoldKey,
           appBar: AppBar(
             backgroundColor: Hexcolor("#fff1d0"),
             title: RichText(
@@ -82,25 +81,46 @@ class _BankTransferState extends State<BankTransfer> {
         txRef: this.widget._paymentManager.txRef);
 
     try {
-      final BankTransferResponse response =
-      await this.widget._paymentManager.payWithBankTransfer(request, client);
+      final BankTransferResponse response = await this
+          .widget
+          ._paymentManager
+          .payWithBankTransfer(request, client);
       if (FlutterwaveUtils.SUCCESS == response.status) {
         this._afterChargeInitiated(response);
       }
-    } catch(error) {
+    } catch (error) {
       this.showSnackBar(error.toString());
-    }
-    finally {
+    } finally {
       this.closeDialog();
     }
   }
 
-  void _verifyTransfer() {
+  void _verifyTransfer() async {
     if (this._bankTransferResponse != null) {
-      //todo show loader
-      print("Should start verification");
+//      this.showLoading("verifying payment...");
+      final client = http.Client();
+      try {
+        final response = await this.widget._paymentManager.verifyPayment(
+            this._bankTransferResponse.meta.authorization.transferReference,
+            client);
+        if (response.data.status == FlutterwaveUtils.SUCCESS &&
+            response.data.amount ==
+                this._bankTransferResponse.meta.authorization.transferAmount
+                    .toString()) {
+          this.closeDialog();
+          print("ref from transfer => ${this._bankTransferResponse.meta.authorization.transferReference}");
+          print("ref from Verification => ${response.data.flwRef}");
+          print("verification successfulin verify => ${response.toJson()}");
+          this.showSnackBar("Payment received");
+        } else {
+          this.showSnackBar(response.message);
+          print("response => ${response.toJson()}");
+        }
+      } catch (error) {
+        this.closeDialog();
+        this.showSnackBar(error.toString());
+      }
     }
-
   }
 
   void _afterChargeInitiated(BankTransferResponse response) {

@@ -4,11 +4,11 @@ class FlutterwaveUtils {
   static const String BASE_URL = "https://ravesandboxapi.flutterwave.com/v3/sdkcheckout/";
   static const String CHARGE_CARD_URL = "charges?type=card";
   static const String BANK_TRANSFER = "charges?type=bank_transfer";
-  static const String ACCOUNT = "charges?type=debit_ng_account";
+  static const String PAY_WITH_ACCOUNT = "charges?type=debit_ng_account";
 
 
   static const String VALIDATE_CHARGE = "validate-charge";
-  static const String VERIFY = "mpesa-verify";
+  static const String VERIFY_TRANSACTION = "mpesa-verify";
 
   static const String DEFAULT_REDIRECT_URL = "https://flutterwave.com/ng/";
 

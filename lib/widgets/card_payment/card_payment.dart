@@ -5,7 +5,7 @@ import 'package:flutterwave/models/requests/charge_card/charge_request_address.d
 import 'package:flutterwave/widgets/card_payment/authorization_webview.dart';
 import 'package:flutterwave/core/interfaces/card_payment_listener.dart';
 import 'package:flutterwave/models/requests/charge_card/charge_card_request.dart';
-import 'package:flutterwave/models/responses/charge_card_response/charge_card_response.dart';
+import 'package:flutterwave/models/responses/charge_card_response.dart';
 import 'package:flutterwave/widgets/card_payment/request_address.dart';
 
 import 'request_otp.dart';
@@ -244,7 +244,7 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   @override
-  void onRedirect(ChargeCardResponse response, String url) async {
+  void onRedirect(ChargeResponse response, String url) async {
     this.closeDialog();
     final flwRef = await await Navigator.of(this.context).push(
         MaterialPageRoute(
@@ -263,7 +263,7 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   @override
-  void onRequireAddress(ChargeCardResponse response) async {
+  void onRequireAddress(ChargeResponse response) async {
     this.closeDialog();
     final ChargeRequestAddress addressDetails = await Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => RequestAddress()));
@@ -276,7 +276,7 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   @override
-  void onRequirePin(ChargeCardResponse response) async {
+  void onRequirePin(ChargeResponse response) async {
     this.closeDialog();
     final pin = await Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => RequestPin()));
@@ -286,14 +286,14 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   @override
-  void onRequireOTP(ChargeCardResponse response, String message) async {
+  void onRequireOTP(ChargeResponse response, String message) async {
     this.closeDialog();
     final otp = await Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => RequestOTP(message)));
     if (otp == null) return;
     final client = http.Client();
     this.showLoading("verifying payment...");
-    final ChargeCardResponse chargeCardResponse = await this
+    final ChargeResponse chargeCardResponse = await this
         .widget
         ._paymentManager
         .validatePayment(otp, response.data.flwRef, client);
