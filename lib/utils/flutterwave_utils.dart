@@ -16,6 +16,16 @@ class FlutterwaveUtils {
 
   static const String DEFAULT_REDIRECT_URL = "https://flutterwave.com/ng/";
 
+  static const String NGN = "NGN";
+  static const String RWF = "RWF";
+  static const String UGX = "UGX";
+  static const String ZMW = "ZMW";
+  static const String GHS = "GHS";
+  static const String GBP = "GBP";
+  static const String ZAR = "ZAR";
+  static const String XAF = "XAF";
+  static const String XOF = "XOF";
+
   static const String CHARGE_INITIATED = "Charge initiated";
   static const String REQUIRES_AUTH = "Charge authorization data required";
   static const String SUCCESS = "success";
