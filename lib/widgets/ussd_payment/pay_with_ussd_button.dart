@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class PayWithUssdButton extends StatefulWidget {
   final Function _paywithUssd;
-  final TextEditingController bankController;
   final Function showBottomSheet;
+  final TextEditingController bankController;
 
   PayWithUssdButton(this._paywithUssd, this.bankController, this.showBottomSheet);
 

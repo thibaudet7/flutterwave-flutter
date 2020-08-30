@@ -14,7 +14,7 @@ class USSDDetails extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.fromLTRB(20, 40, 20, 20),
+      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
       child: Column(
         children: [
           Text(
@@ -22,7 +22,7 @@ class USSDDetails extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.black, fontSize: 18),
           ),
-          SizedBox(height: 80),
+          SizedBox(height: 60),
           Text(
             authorization.note,
             textAlign: TextAlign.center,
@@ -32,11 +32,28 @@ class USSDDetails extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 80),
+          SizedBox(height: 60),
+          RichText(
+            textAlign: TextAlign.left,
+            text: TextSpan(
+              text: "Payment code:  ",
+              style: TextStyle(fontSize: 17, color: Colors.black),
+              children: [
+                TextSpan(
+                  text: this._chargeResponse.data.paymentCode,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black),
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: 60),
           Container(
             height: 40,
             width: double.infinity,
-            margin: EdgeInsets.fromLTRB(5, 10, 20, 5),
+            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: RaisedButton(
               onPressed: this._onPaymentMade,
               color: Colors.orange,
@@ -50,5 +67,4 @@ class USSDDetails extends StatelessWidget {
       ),
     );
   }
-
 }

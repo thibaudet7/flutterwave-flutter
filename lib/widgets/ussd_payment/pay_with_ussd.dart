@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutterwave/core/ussd_payment_manager/ussd_manager.dart';
 import 'package:flutterwave/models/bank_with_ussd.dart';
+import 'package:flutterwave/models/requests/ussd/ussd_request.dart';
 import 'package:flutterwave/models/responses/charge_card_response.dart';
+import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:flutterwave/widgets/ussd_payment/pay_with_ussd_button.dart';
 import 'package:flutterwave/widgets/ussd_payment/ussd_details.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -73,7 +79,8 @@ class _PayWithUssdState extends State<PayWithUssd> {
   Widget _getHomeView() {
     return this.hasInitiatedPay
         ? USSDDetails(this._chargeResponse, this._verifyTransfer)
-        : PayWithUssdButton(this._initiateUSSDPayment, this.controller, this._showBottomSheet);
+        : PayWithUssdButton(
+            this._initiateUSSDPayment, this.controller, this._showBottomSheet);
   }
 
   Widget _getBanksThatAllowsUssd() {
@@ -129,68 +136,78 @@ class _PayWithUssdState extends State<PayWithUssd> {
 
   void _initiateUSSDPayment() async {
     if (this.selectedBank != null) {
-      print("selected bank is ${this.selectedBank.bankName}");
-//      this.setState(() {
-//        this.controller.text = this.selectedBank.bankName;
-//
-//      });
+      this.showLoading("initiating payment...");
+      final USSDPaymentManager ussdPaymentManager = this.widget._paymentManager;
+      final request = USSDRequest(
+          amount: ussdPaymentManager.amount,
+          currency: ussdPaymentManager.currency,
+          email: ussdPaymentManager.email,
+          txRef: ussdPaymentManager.txRef,
+          fullName: ussdPaymentManager.fullName,
+          accountBank: this.selectedBank.bankCode,
+          phoneNumber: ussdPaymentManager.phoneNumber);
+
+      try {
+        final ChargeResponse response = await this
+            .widget
+            ._paymentManager
+            .payWithUSSD(request, http.Client());
+        if (FlutterwaveUtils.SUCCESS == response.status) {
+          this._afterChargeInitiated(response);
+          print("USSD payment from widget ${response.toJson()}");
+        } else {
+          this.showSnackBar(response.message);
+        }
+      } catch (error) {
+        this.showSnackBar(error.toString());
+      } finally {
+        this.closeDialog();
+      }
     } else {
       print("selected bank is null");
     }
-//    this.showLoading("initiating payment...");
-//     final USSDPaymentManager ussdPaymentManager = this.widget._paymentManager;
-//    final request = USSDRequest(
-//        amount: ussdPaymentManager.amount,
-//        currency: ussdPaymentManager.currency,
-//        email: ussdPaymentManager.email,
-//        txRef: ussdPaymentManager.txRef,
-//        fullName: ussdPaymentManager.fullName,
-//        accountBank: "058",
-//        phoneNumber: ussdPaymentManager.phoneNumber);
-//
-//    try {
-//      final ChargeResponse response = await this
-//          .widget
-//          ._paymentManager
-//          .payWithUSSD(request, http.Client());
-//      if (FlutterwaveUtils.SUCCESS == response.status) {
-//        this._afterChargeInitiated(response);
-//        print("USSD payment from widget ${response.toJson()}");
-//      } else {
-//        this.showSnackBar(response.message);
-//      }
-//    } catch (error) {
-//      this.showSnackBar(error.toString());
-//    } finally {
-//      this.closeDialog();
-//    }
   }
 
   void _verifyTransfer() async {
+    final timeoutInMinutes = 5;
+    final timeOutInSeconds = timeoutInMinutes * 60;
+    final requestIntervalInSeconds = 30;
+    final numberOfTries = timeOutInSeconds/requestIntervalInSeconds;
+    int intialCount = 0;
+
     if (this._chargeResponse != null) {
       this.showLoading("verifying payment...");
-//      final client = http.Client();
-//      try {
-//        final response = await this.widget._paymentManager.verifyPayment(
-//            this._bankTransferResponse.meta.authorization.transferReference,
-//            client);
-//        if (response.data.status == FlutterwaveUtils.SUCCESS &&
-//            response.data.amount ==
-//                this._bankTransferResponse.meta.authorization.transferAmount
-//                    .toString()) {
-//          this.closeDialog();
-//          print("ref from transfer => ${this._bankTransferResponse.meta.authorization.transferReference}");
-//          print("ref from Verification => ${response.data.flwRef}");
-//          print("verification successfulin verify => ${response.toJson()}");
-//          this.showSnackBar("Payment received");
-//        } else {
-//          this.showSnackBar(response.message);
-//          print("response => ${response.toJson()}");
-//        }
-//      } catch (error) {
-//        this.closeDialog();
-//        this.showSnackBar(error.toString());
-//      }
+      final client = http.Client();
+      Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
+        try {
+          if (intialCount == numberOfTries) {
+            timer.cancel();
+          }
+          final response = await FlutterwaveAPIUtils.verifyPayment(
+              this._chargeResponse.data.flwRef,
+              client,
+              this.widget._paymentManager.publicKey,
+              this.widget._paymentManager.isDebugMode);
+
+          if (response.data.status == FlutterwaveUtils.SUCCESS &&
+              response.data.amount ==
+                  this._chargeResponse.data.amount.toString()) {
+            timer.cancel();
+            this.closeDialog();
+            this.showSnackBar("Payment Completed");
+          } else {
+            this.showSnackBar(response.message);
+          }
+        } catch (error) {
+          timer.cancel();
+          this.closeDialog();
+          this.showSnackBar(error.toString());
+        } finally {
+          intialCount = intialCount + 1;
+          this.closeDialog();
+          client.close();
+        }
+      });
     }
   }
 
