@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/pay_with_account_manager/bank_account_manager.dart';
-import 'package:flutterwave/widgets/bank_account/bank_account_payment.dart';
+import 'package:flutterwave/widgets/bank_account_payment/bank_account_payment.dart';
+import 'package:flutterwave/widgets/bank_transfer_payment/bank_transfer_payment.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutterwave/core/bank_transfer_manager/bank_transfer_payment_manager.dart';
 import 'package:flutterwave/core/card_payment_manager/card_payment_manager.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
-import 'package:flutterwave/widgets/bank_transfer/bank_transfer_payment.dart';
 import 'package:flutterwave/widgets/card_payment/card_payment.dart';
 
 import 'flutterwave_payment_option.dart';
