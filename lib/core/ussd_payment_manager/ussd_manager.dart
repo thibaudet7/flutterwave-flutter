@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutterwave/models/requests/ussd/ussd_request.dart';
-import 'package:flutterwave/models/responses/bank_transfer_response/bank_transfer_response.dart';
 import 'package:flutterwave/models/responses/charge_card_response.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:http/http.dart' as http;
