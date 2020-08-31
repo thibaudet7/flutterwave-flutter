@@ -10,6 +10,11 @@ class FlutterwaveUtils {
   static const String GET_BANKS_URL =
       "https://api.ravepay.co/flwv3-pug/getpaidx/api/flwpbf-banks.js?json=1";
   static const String PAY_WITH_USSD = "charges?type=ussd";
+  static const String RWANDA_MOBILE_MONEY = "charges?type=mobile_money_rwanda";
+  static const String UGANDA_MOBILE_MONEY = "charges?type=mobile_money_uganda";
+  static const String ZAMBIA_MOBILE_MONEY = "charges?type=mobile_money_zambia";
+  static const String GHANA_MOBILE_MONEY = "charges?type=mobile_money_ghana";
+
 
   static const String VALIDATE_CHARGE = "validate-charge";
   static const String VERIFY_TRANSACTION = "mpesa-verify";
@@ -17,6 +22,7 @@ class FlutterwaveUtils {
   static const String DEFAULT_REDIRECT_URL = "https://flutterwave.com/ng/";
 
   static const String NGN = "NGN";
+  static const String KES = "KES";
   static const String RWF = "RWF";
   static const String UGX = "UGX";
   static const String ZMW = "ZMW";
@@ -44,5 +50,24 @@ class FlutterwaveUtils {
 
   static String getBaseUrl(final bool isDebugMode) {
     return isDebugMode ? _DEBUG_BASE_URL : _PROD_BASE_URL;
+  }
+
+  static String getMobileMoneyUrl(final String currency) {
+    switch(currency) {
+      case UGX: return UGANDA_MOBILE_MONEY;
+      case RWF: return RWANDA_MOBILE_MONEY;
+      case ZMW: return ZAMBIA_MOBILE_MONEY;
+      case GHS: return GHANA_MOBILE_MONEY;
+    }
+    return "";
+  }
+
+  static List<String> getAllowedMobileMoneyNetworksByCurrency(final String currency) {
+    switch(currency) {
+      case GHS: return ["MTN", "VODAFONE", "TIGO"];
+      case UGX: return [];
+      case RWF: return [];
+      case ZMW: return [];
+    }
   }
 }

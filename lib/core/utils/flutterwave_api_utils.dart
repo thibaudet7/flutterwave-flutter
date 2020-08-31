@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutterwave/core/flutterwave_error.dart';
 import 'package:flutterwave/models/requests/verify_charge_request.dart';
-import 'package:flutterwave/models/responses/charge_card_response.dart';
+import 'package:flutterwave/models/responses/charge_response.dart';
 import 'package:flutterwave/models/responses/get_bank/get_bank_response.dart';
 import 'package:flutterwave/models/responses/resolve_account/resolve_account_response.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
