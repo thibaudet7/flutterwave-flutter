@@ -9,6 +9,9 @@ class FlutterwaveUtils {
   static const String PAY_WITH_ACCOUNT = "charges?type=debit_ng_account";
   static const String GET_BANKS_URL =
       "https://api.ravepay.co/flwv3-pug/getpaidx/api/flwpbf-banks.js?json=1";
+  static const String PAY_WITH_MPESA = "charges?type=mpesa";
+
+
   static const String PAY_WITH_USSD = "charges?type=ussd";
   static const String RWANDA_MOBILE_MONEY = "charges?type=mobile_money_rwanda";
   static const String UGANDA_MOBILE_MONEY = "charges?type=mobile_money_uganda";

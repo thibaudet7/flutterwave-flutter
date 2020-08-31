@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterwave/core/bank_transfer_manager/bank_transfer_payment_manager.dart';
 import 'package:flutterwave/core/card_payment_manager/card_payment_manager.dart';
 import 'package:flutterwave/core/mobile_money/mobile_money_payment_manager.dart';
+import 'package:flutterwave/core/mpesa/mpesa_payment_manager.dart';
 import 'package:flutterwave/core/pay_with_account_manager/bank_account_manager.dart';
 import 'package:flutterwave/core/ussd_payment_manager/ussd_manager.dart';
 
@@ -130,5 +131,18 @@ class FlutterwavePaymentManager {
         phoneNumber: this.phoneNumber,
         fullName: this.fullName,
         email: this.email);
+  }
+
+  MpesaPaymentManager getMpesaPaymentManager() {
+    return MpesaPaymentManager(
+      publicKey: this.publicKey,
+      currency: this.currency,
+      amount: this.amount,
+      txRef: this.txRef,
+      isDebugMode: this.isDebugMode,
+      phoneNumber: this.phoneNumber,
+      fullName: this.fullName,
+      email: this.email
+    );
   }
 }
