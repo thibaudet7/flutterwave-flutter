@@ -176,7 +176,6 @@ class CardPaymentManager {
     } finally {
       client.close();
     }
-   
   }
 
   Future<ChargeResponse> verifyPayment(

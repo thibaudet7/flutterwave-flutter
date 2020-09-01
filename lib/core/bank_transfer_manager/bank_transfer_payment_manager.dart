@@ -60,9 +60,9 @@ class BankTransferPaymentManager {
     } catch (error) {
       throw (FlutterError(error.toString()));
     }
-    finally {
-      client.close();
-    }
+//    finally {
+//      client.close();
+//    }
   }
 
   Future<ChargeResponse> verifyPayment(final String flwRef, final http.Client client) async {
@@ -83,8 +83,9 @@ class BankTransferPaymentManager {
       return cardResponse;
     } catch (error) {
       throw(FlutterWaveError(error.toString()));
-    } finally {
-      client.close();
-    }
+    } 
+//    finally {
+//      client.close();
+//    }
   }
 }

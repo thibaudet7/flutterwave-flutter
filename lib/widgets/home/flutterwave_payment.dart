@@ -123,16 +123,16 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                         buttonText: "USSD",
                       ),
                     ),
-                    SizedBox(
-                      height: 0.5,
-                    ),
-                    SizedBox(
-                      height: 50.0,
-                      child: FlutterwavePaymentOption(
-                        handleClick: () => {},
-                        buttonText: "Barter",
-                      ),
-                    ),
+//                    SizedBox(
+//                      height: 0.5,
+//                    ),
+//                    SizedBox(
+//                      height: 50.0,
+//                      child: FlutterwavePaymentOption(
+//                        handleClick: () => {},
+//                        buttonText: "Barter",
+//                      ),
+//                    ),
                     SizedBox(
                       height: 0.5,
                     ),

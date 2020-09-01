@@ -166,7 +166,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
     final networks = FlutterwaveUtils.getAllowedMobileMoneyNetworksByCurrency(
         this.widget._paymentManager.currency);
     return Container(
-      height: 150,
+      height: 220,
       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
       color: Colors.white,
       child: ListView(
