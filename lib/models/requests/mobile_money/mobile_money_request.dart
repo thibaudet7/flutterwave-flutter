@@ -14,7 +14,7 @@ class MobileMoneyRequest {
   MobileMoneyRequest({
     @required this.amount,
     @required this.currency,
-    @required this.network,
+    this.network = " ",
     @required this.txRef,
     @required this.fullName,
     @required this.email,
@@ -37,7 +37,7 @@ class MobileMoneyRequest {
     return {
       'amount': this.amount,
       'currency': this.currency,
-      'network': this.network,
+      'network': this.network == null ? " " : this.network,
       'tx_ref': this.txRef,
       'fullname': this.fullName,
       'email': this.email,

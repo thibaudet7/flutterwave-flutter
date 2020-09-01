@@ -33,29 +33,16 @@ class MobileMoneyPaymentManager {
   Future<ChargeResponse> payWithMobileMoney(
       MobileMoneyRequest mobileMoneyRequest, http.Client client) async {
     final requestBody = mobileMoneyRequest.toJson();
-
     final url = FlutterwaveUtils.getBaseUrl(this.isDebugMode) +
         FlutterwaveUtils.getMobileMoneyUrl(this.currency);
-    print("url iss ==> $url");
-
     try {
-      print(
-          "Pay With Mobile Money Request Payload => ${mobileMoneyRequest.toJson()}");
-
       final http.Response response = await client.post(url,
           headers: {HttpHeaders.authorizationHeader: this.publicKey},
           body: requestBody);
-
-      ChargeResponse chargeResponse =
-      ChargeResponse.fromJson(json.decode(response.body));
-
-      print("Pay with Mobile Money response => ${chargeResponse.toJson()}");
-
+      ChargeResponse chargeResponse = ChargeResponse.fromJson(json.decode(response.body));
       return chargeResponse;
-    } catch (error) {
+    } catch (error, stackTrace) {
       throw (FlutterError(error.toString()));
-    } finally {
-      client.close();
     }
   }
 }

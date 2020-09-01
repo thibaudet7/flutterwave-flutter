@@ -229,14 +229,14 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
   }
 
   void _handlePayment() async {
-    //todo show loading
+
     this.showLoading("initiating payment...");
+
     final MobileMoneyPaymentManager mobileMoneyPaymentManager =
         this.widget._paymentManager;
     final MobileMoneyRequest request = MobileMoneyRequest(
         amount: mobileMoneyPaymentManager.amount,
         currency: mobileMoneyPaymentManager.currency,
-//        network: mobileMoneyPaymentManager.network,
         network: this.selectedNetwork,
         txRef: mobileMoneyPaymentManager.txRef,
         fullName: mobileMoneyPaymentManager.fullName,
@@ -249,15 +249,14 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
       await mobileMoneyPaymentManager.payWithMobileMoney(request, client);
       if (FlutterwaveUtils.SUCCESS == response.status &&
           FlutterwaveUtils.CHARGE_INITIATED == response.message) {
-        print("successs");
-        print("Mobile Money URL is ${response.meta.authorization.redirect}");
         this.closeDialog();
         this.openOtpScreen(response.meta.authorization.redirect);
-        client.close();
+      } else {
+        this.showSnackBar(response.message);
       }
-    } catch (error) {} finally {
-      //todo close dialog
+    } catch (error) {
       this.closeDialog();
+      this.showSnackBar(error.toString());
     }
   }
 
@@ -274,32 +273,29 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
         this.showSnackBar(result["message"]);
       }
     } else {
-      // show error
-      print("Transaction not completed.");
+      this.showSnackBar("Transaction not completed.");
     }
   }
 
   void _verifyPayment(final String flwRef) async {
     this.showLoading("verifying payment...");
-    print("FLW Ref in Mobile Money is $flwRef");
     final client = http.Client();
     try {
       final response = await FlutterwaveAPIUtils.verifyPayment(
           flwRef, client, this.widget._paymentManager.publicKey,
           this.widget._paymentManager.isDebugMode);
-      if (response.data.status == FlutterwaveUtils.SUCCESS &&
+      this.closeDialog();
+      if (response.data.status == FlutterwaveUtils.SUCCESSFUL &&
           response.data.amount == this.widget._paymentManager.amount &&
           response.data.flwRef == flwRef) {
         this.showSnackBar("Payment complete.");
-        Navigator.pop(this.context, response);
+        Navigator.of(this.context).pop(response);
       } else {
         this.closeDialog();
         this.showSnackBar(response.message);
       }
     } catch (error) {
       this.showSnackBar(error.toString());
-    } finally {
-      client.close();
     }
   }
 }
