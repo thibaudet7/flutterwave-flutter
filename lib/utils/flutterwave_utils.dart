@@ -17,6 +17,7 @@ class FlutterwaveUtils {
   static const String UGANDA_MOBILE_MONEY = "charges?type=mobile_money_uganda";
   static const String ZAMBIA_MOBILE_MONEY = "charges?type=mobile_money_zambia";
   static const String GHANA_MOBILE_MONEY = "charges?type=mobile_money_ghana";
+  static const String FRANCOPHONE_MOBILE_MONEY = "charges?type=mobile_money_franco";
 
 
   static const String VALIDATE_CHARGE = "validate-charge";
@@ -64,6 +65,8 @@ class FlutterwaveUtils {
       case RWF: return RWANDA_MOBILE_MONEY;
       case ZMW: return ZAMBIA_MOBILE_MONEY;
       case GHS: return GHANA_MOBILE_MONEY;
+      case XAF: return FRANCOPHONE_MOBILE_MONEY;
+      case XOF: return FRANCOPHONE_MOBILE_MONEY;
     }
     return "";
   }

@@ -33,6 +33,7 @@ class MobileMoneyPaymentManager {
   Future<ChargeResponse> payWithMobileMoney(
       MobileMoneyRequest mobileMoneyRequest, http.Client client) async {
     final requestBody = mobileMoneyRequest.toJson();
+    print("MM Request is $requestBody");
     final url = FlutterwaveUtils.getBaseUrl(this.isDebugMode) +
         FlutterwaveUtils.getMobileMoneyUrl(this.currency);
     try {

@@ -173,6 +173,16 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                         buttonText: "Zambia Mobile Money",
                       ),
                     ),
+                    SizedBox(
+                      height: 0.5,
+                    ),
+                    SizedBox(
+                      height: 50.0,
+                      child: FlutterwavePaymentOption(
+                        handleClick: this._launchMobileMoneyPaymentWidget,
+                        buttonText: "Francophone Mobile Money",
+                      ),
+                    ),
                   ],
                 ),
               ),

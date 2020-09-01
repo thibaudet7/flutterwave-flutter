@@ -214,6 +214,10 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
         return "Zambia Mobile Money";
       case FlutterwaveUtils.UGX:
         return "Uganda Mobile Money";
+      case FlutterwaveUtils.XAF:
+        return "Francophone Mobile Money";
+      case FlutterwaveUtils.XOF:
+        return "Francophone Mobile Money";
     }
     return "";
   }
@@ -247,9 +251,9 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
     try {
       final response =
       await mobileMoneyPaymentManager.payWithMobileMoney(request, client);
+      this.closeDialog();
       if (FlutterwaveUtils.SUCCESS == response.status &&
           FlutterwaveUtils.CHARGE_INITIATED == response.message) {
-        this.closeDialog();
         this.openOtpScreen(response.meta.authorization.redirect);
       } else {
         this.showSnackBar(response.message);
@@ -261,6 +265,10 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
   }
 
   Future<dynamic> openOtpScreen(String url) async {
+    if (url == null) {
+      this.showSnackBar("Unable to complete transaction. Please try again later.");
+      return;
+    }
     final result = await Navigator.push(
       this.context,
       MaterialPageRoute(
