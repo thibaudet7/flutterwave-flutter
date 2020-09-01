@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/models/requests/mpesa/mpesa_request.dart';
@@ -177,32 +179,46 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
   }
 
   void _verifyPayment(final String flwRef) async {
+    final timeoutInMinutes = 5;
+    final timeOutInSeconds = timeoutInMinutes * 60;
+    final requestIntervalInSeconds = 15;
+    final numberOfTries = timeOutInSeconds / requestIntervalInSeconds;
+    int intialCount = 0;
+
     this.showLoading("verifying payment...");
     final client = http.Client();
-    try {
-      final response = await FlutterwaveAPIUtils.verifyPayment(
-          flwRef,
-          client,
-          this.widget._paymentManager.publicKey,
-          this.widget._paymentManager.isDebugMode);
-      this.closeDialog();
-      print("Verify Bank staus => ${response.data.status}");
-      print("Verify Bank amount => ${response.data.amount}");
-      print("Verify Bank flwRef => ${response.data.flwRef}");
+    Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
+      try {
+        if (intialCount == numberOfTries) {
+          timer.cancel();
+        }
+        final response = await FlutterwaveAPIUtils.verifyPayment(
+            flwRef,
+            client,
+            this.widget._paymentManager.publicKey,
+            this.widget._paymentManager.isDebugMode);
 
-      if (response.data.status == FlutterwaveUtils.SUCCESS &&
-          response.data.amount == this.widget._paymentManager.amount &&
-          response.data.flwRef == flwRef &&
-          response.data.currency == this.widget._paymentManager.currency) {
-        this.showSnackBar("Payment complete.");
-        Navigator.of(this.context).pop(response);
-      } else {
-        print("response Data don't match");
+        if ((response.data.status == FlutterwaveUtils.SUCCESS ||
+                response.data.status == FlutterwaveUtils.SUCCESSFUL) &&
+            response.data.amount ==
+                this.widget._paymentManager.amount.toString() &&
+            response.data.flwRef == flwRef &&
+            response.data.currency == this.widget._paymentManager.currency) {
+          timer.cancel();
+          this.closeDialog();
+          this.showSnackBar("Payment Completed");
+        } else {
+          this.showSnackBar(response.message);
+        }
+      } catch (error) {
+        timer.cancel();
         this.closeDialog();
-        this.showSnackBar(response.data.status);
+        this.showSnackBar(error.toString());
+      } finally {
+        intialCount = intialCount + 1;
+        this.closeDialog();
+        client.close();
       }
-    } catch (error) {
-      this.showSnackBar(error.toString());
-    }
+    });
   }
 }

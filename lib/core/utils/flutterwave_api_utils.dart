@@ -38,7 +38,6 @@ class FlutterwaveAPIUtils {
       final http.Client client) async {
     try {
       final response = await client.get(FlutterwaveUtils.GET_BANKS_URL);
-      print("resolved is ${jsonDecode(response.body).runtimeType}");
       final ResolveAccountResponse resolveAccountResponse =
           jsonDecode(response.body);
       return resolveAccountResponse;
@@ -77,14 +76,12 @@ class FlutterwaveAPIUtils {
         FlutterwaveUtils.VERIFY_TRANSACTION;
     final VerifyChargeRequest verifyRequest = VerifyChargeRequest(flwRef);
     final payload = verifyRequest.toJson();
-    print("Verify Bank Payload => $payload");
     try {
       final http.Response response = await client.post(url,
           headers: {HttpHeaders.authorizationHeader: publicKey}, body: payload);
 
       final ChargeResponse cardResponse =
           ChargeResponse.fromJson(jsonDecode(response.body));
-      print("Verify Bank Response Payload => ${cardResponse.toJson()}");
       return cardResponse;
     } catch (error, stacktrace) {
       print(stacktrace);
