@@ -52,7 +52,6 @@ class FlutterwaveAPIUtils {
   static Future<ChargeResponse> validatePayment(
       String otp, String flwRef, http.Client client, final bool isDebugMode, final String publicKey) async {
     final url = FlutterwaveUtils.getBaseUrl(isDebugMode) + FlutterwaveUtils.VALIDATE_CHARGE;
-    print("url iss ==> $url");
     final ValidateChargeRequest chargeRequest =
     ValidateChargeRequest(otp, flwRef);
     final payload = chargeRequest.toJson();
@@ -66,8 +65,6 @@ class FlutterwaveAPIUtils {
       return cardResponse;
     } catch (error) {
       throw (FlutterWaveError(error.toString()));
-    } finally {
-      client.close();
     }
   }
 
@@ -80,8 +77,7 @@ class FlutterwaveAPIUtils {
         FlutterwaveUtils.VERIFY_TRANSACTION;
     final VerifyChargeRequest verifyRequest = VerifyChargeRequest(flwRef);
     final payload = verifyRequest.toJson();
-    print("Verify Bank Url => $url");
-    print("Verify Bank Request Payload => ${verifyRequest.toJson()}");
+    print("Verify Bank Payload => $payload");
     try {
       final http.Response response = await client.post(url,
           headers: {HttpHeaders.authorizationHeader: publicKey}, body: payload);
@@ -90,11 +86,9 @@ class FlutterwaveAPIUtils {
           ChargeResponse.fromJson(jsonDecode(response.body));
       print("Verify Bank Response Payload => ${cardResponse.toJson()}");
       return cardResponse;
-    } catch (error) {
+    } catch (error, stacktrace) {
+      print(stacktrace);
       throw (FlutterWaveError(error.toString()));
     } 
-//    finally {
-//      client.close();
-//    }
   }
 }

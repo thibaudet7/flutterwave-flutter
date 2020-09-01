@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/utils/flutterwave_utils.dart';
+import 'package:flutterwave/widgets/mpesa_payment/pay_with_mpesa.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutterwave/core/bank_transfer_manager/bank_transfer_payment_manager.dart';
 import 'package:flutterwave/core/card_payment_manager/card_payment_manager.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 import 'package:flutterwave/core/mobile_money/mobile_money_payment_manager.dart';
+import 'package:flutterwave/core/mpesa/mpesa_payment_manager.dart';
 import 'package:flutterwave/core/pay_with_account_manager/bank_account_manager.dart';
 import 'package:flutterwave/core/ussd_payment_manager/ussd_manager.dart';
+import 'package:flutterwave/models/requests/mpesa/mpesa_request.dart';
 import 'package:flutterwave/widgets/bank_account_payment/bank_account_payment.dart';
 import 'package:flutterwave/widgets/bank_transfer_payment/bank_transfer_payment.dart';
 import 'package:flutterwave/widgets/card_payment/card_payment.dart';
@@ -123,16 +129,16 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                         buttonText: "USSD",
                       ),
                     ),
-//                    SizedBox(
-//                      height: 0.5,
-//                    ),
-//                    SizedBox(
-//                      height: 50.0,
-//                      child: FlutterwavePaymentOption(
-//                        handleClick: () => {},
-//                        buttonText: "Barter",
-//                      ),
-//                    ),
+                    SizedBox(
+                      height: 0.5,
+                    ),
+                    SizedBox(
+                      height: 50.0,
+                      child: FlutterwavePaymentOption(
+                        handleClick: this._launchMpesaPaymentWidget,
+                        buttonText: "Mpesa",
+                      ),
+                    ),
                     SizedBox(
                       height: 0.5,
                     ),
@@ -238,6 +244,40 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
       this.context,
       MaterialPageRoute(
           builder: (context) => PayWithMobileMoney(mobileMoneyPaymentManager)),
+    );
+  }
+
+  void _launchMpesaPaymentWidget() async {
+    final FlutterwavePaymentManager paymentManager =
+        this.widget._flutterwavePaymentManager;
+    final MpesaPaymentManager mpesaPaymentManager =
+        paymentManager.getMpesaPaymentManager();
+//    final MpesaRequest request = MpesaRequest(
+//        amount: paymentManager.amount,
+//        currency: paymentManager.currency,
+//        email: paymentManager.email,
+//        txRef: paymentManager.txRef,
+//        fullName: paymentManager.fullName,
+//        phoneNumber: paymentManager.phoneNumber);
+//
+//    final client = http.Client();
+//    final response = await mpesaPaymentManager.payWithMpesa(request, client);
+//    print("mpesa response is ${response.toJson()}");
+//    if (response.message == FlutterwaveUtils.CHARGE_INITIATED &&
+//        response.status == FlutterwaveUtils.SUCCESS) {
+//      final verify = await FlutterwaveAPIUtils.verifyPayment(
+//          response.data.flwRef,
+//          http.Client(),
+//          paymentManager.publicKey,
+//          paymentManager.isDebugMode);
+//      print("verify response is ${verify.toJson()}");
+//    } else {
+//      print("mpesa error is ${response.message}");
+//    }
+    Navigator.push(
+      this.context,
+      MaterialPageRoute(
+          builder: (context) => PayWithMpesa(mpesaPaymentManager)),
     );
   }
 }
