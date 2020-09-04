@@ -6,6 +6,7 @@ import 'package:flutterwave/core/mobile_money/mobile_money_payment_manager.dart'
 import 'package:flutterwave/core/mpesa/mpesa_payment_manager.dart';
 import 'package:flutterwave/core/pay_with_account_manager/bank_account_manager.dart';
 import 'package:flutterwave/core/ussd_payment_manager/ussd_manager.dart';
+import 'package:flutterwave/models/responses/charge_response.dart';
 import 'package:flutterwave/widgets/bank_account_payment/bank_account_payment.dart';
 import 'package:flutterwave/widgets/bank_transfer_payment/bank_transfer_payment.dart';
 import 'package:flutterwave/widgets/card_payment/card_payment.dart';
@@ -25,12 +26,15 @@ class FlutterwaveUI extends StatefulWidget {
 }
 
 class _FlutterwaveUIState extends State<FlutterwaveUI> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final FlutterwavePaymentManager paymentManager =
         this.widget._flutterwavePaymentManager;
     return MaterialApp(
       home: Scaffold(
+        key: this._scaffoldKey,
         body: Container(
           alignment: Alignment.bottomCenter,
           width: double.infinity,
@@ -63,7 +67,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      height: 150.0,
+                      height: 80,
                     ),
                     Container(
                       width: double.infinity,
@@ -255,6 +259,23 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                       ),
                     ),
                     Visibility(
+                      visible: false,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 50.0,
+                            child: FlutterwavePaymentOption(
+                              handleClick: () => { },
+                              buttonText: "Barter",
+                            ),
+                          ),
+                          SizedBox(
+                            height: 0.5,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Visibility(
                       visible: paymentManager.acceptFancophoneMobileMoney,
                       child: SizedBox(
                         height: 50.0,
@@ -274,13 +295,21 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
     );
   }
 
-  void _launchCardPaymentWidget() {
+  void _launchCardPaymentWidget() async {
     final CardPaymentManager cardPaymentManager =
         this.widget._flutterwavePaymentManager.getCardPaymentManager();
-    Navigator.push(
+    final ChargeResponse chargeResponse = await Navigator.push(
       this.context,
       MaterialPageRoute(builder: (context) => CardPayment(cardPaymentManager)),
     );
+    String message;
+    if (chargeResponse != null) {
+      message = chargeResponse.message;
+    } else {
+      message = "Transaction cancelled";
+    }
+    this.showSnackBar(message);
+    Navigator.pop(this.context, chargeResponse);
   }
 
   void _launchBankTransferPaymentWidget() {
@@ -332,5 +361,35 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
       MaterialPageRoute(
           builder: (context) => PayWithMpesa(mpesaPaymentManager)),
     );
+  }
+
+  void _launchBarterPaymentWidget() async {
+    final MobileMoneyPaymentManager mobileMoneyPaymentManager =
+    this.widget._flutterwavePaymentManager.getMobileMoneyPaymentManager();
+    Navigator.push(
+      this.context,
+      MaterialPageRoute(
+          builder: (context) => PayWithMobileMoney(mobileMoneyPaymentManager)),
+    );
+  }
+
+  void _launchUKAccountPaymentWidget() async {
+    final MobileMoneyPaymentManager mobileMoneyPaymentManager =
+    this.widget._flutterwavePaymentManager.getMobileMoneyPaymentManager();
+    Navigator.push(
+      this.context,
+      MaterialPageRoute(
+          builder: (context) => PayWithMobileMoney(mobileMoneyPaymentManager)),
+    );
+  }
+
+  void showSnackBar(String message) {
+    SnackBar snackBar = SnackBar(
+      content: Text(
+        message,
+        textAlign: TextAlign.center,
+      ),
+    );
+    this._scaffoldKey.currentState.showSnackBar(snackBar);
   }
 }
