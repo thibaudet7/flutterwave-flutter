@@ -112,7 +112,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                             width: double.infinity,
                             height: 50.0,
                             child: FlutterwavePaymentOption(
-                              handleClick: this._launchAccountWidget,
+                              handleClick: this._launchPayWithAccountWidget,
                               buttonText: "Account",
                             ),
                           ),
@@ -265,7 +265,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                           SizedBox(
                             height: 50.0,
                             child: FlutterwavePaymentOption(
-                              handleClick: () => { },
+                              handleClick: () => {},
                               buttonText: "Barter",
                             ),
                           ),
@@ -312,43 +312,47 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
     Navigator.pop(this.context, chargeResponse);
   }
 
-  void _launchBankTransferPaymentWidget() {
+  void _launchBankTransferPaymentWidget() async {
     final BankTransferPaymentManager bankTransferPaymentManager =
         this.widget._flutterwavePaymentManager.getBankTransferPaymentManager();
-    Navigator.push(
+    final response = await Navigator.push(
       this.context,
       MaterialPageRoute(
           builder: (context) => BankTransfer(bankTransferPaymentManager)),
     );
+    Navigator.pop(this.context, response);
   }
 
-  void _launchAccountWidget() {
+  void _launchPayWithAccountWidget() async {
     final BankAccountPaymentManager bankAccountPaymentManager =
         this.widget._flutterwavePaymentManager.getBankAccountPaymentManager();
-    Navigator.push(
+    final response = await Navigator.push(
       this.context,
       MaterialPageRoute(
           builder: (context) => RequestBankAccount(bankAccountPaymentManager)),
     );
+    Navigator.pop(this.context, response);
   }
 
   void _launchUSSDPaymentWidget() async {
     final USSDPaymentManager paymentManager =
         this.widget._flutterwavePaymentManager.getUSSDPaymentManager();
-    Navigator.push(
+    final response = await Navigator.push(
       this.context,
       MaterialPageRoute(builder: (context) => PayWithUssd(paymentManager)),
     );
+    Navigator.pop(this.context, response);
   }
 
   void _launchMobileMoneyPaymentWidget() async {
     final MobileMoneyPaymentManager mobileMoneyPaymentManager =
         this.widget._flutterwavePaymentManager.getMobileMoneyPaymentManager();
-    Navigator.push(
+    final response = await Navigator.push(
       this.context,
       MaterialPageRoute(
           builder: (context) => PayWithMobileMoney(mobileMoneyPaymentManager)),
     );
+    Navigator.pop(this.context, response);
   }
 
   void _launchMpesaPaymentWidget() async {
@@ -356,31 +360,34 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
         this.widget._flutterwavePaymentManager;
     final MpesaPaymentManager mpesaPaymentManager =
         paymentManager.getMpesaPaymentManager();
-    Navigator.push(
+    final response = await Navigator.push(
       this.context,
       MaterialPageRoute(
           builder: (context) => PayWithMpesa(mpesaPaymentManager)),
     );
+    Navigator.pop(this.context, response);
   }
 
   void _launchBarterPaymentWidget() async {
     final MobileMoneyPaymentManager mobileMoneyPaymentManager =
-    this.widget._flutterwavePaymentManager.getMobileMoneyPaymentManager();
-    Navigator.push(
+        this.widget._flutterwavePaymentManager.getMobileMoneyPaymentManager();
+    final response = await Navigator.push(
       this.context,
       MaterialPageRoute(
           builder: (context) => PayWithMobileMoney(mobileMoneyPaymentManager)),
     );
+    Navigator.pop(this.context, response);
   }
 
   void _launchUKAccountPaymentWidget() async {
     final MobileMoneyPaymentManager mobileMoneyPaymentManager =
-    this.widget._flutterwavePaymentManager.getMobileMoneyPaymentManager();
-    Navigator.push(
+        this.widget._flutterwavePaymentManager.getMobileMoneyPaymentManager();
+    final response = await Navigator.push(
       this.context,
       MaterialPageRoute(
           builder: (context) => PayWithMobileMoney(mobileMoneyPaymentManager)),
     );
+    Navigator.pop(this.context, response);
   }
 
   void showSnackBar(String message) {
