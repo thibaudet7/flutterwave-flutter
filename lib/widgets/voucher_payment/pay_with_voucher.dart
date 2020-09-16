@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/core/voucher_payment/voucher_payment_manager.dart';
 import 'package:flutterwave/models/requests/voucher/voucher_payment_request.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
+import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
 import 'package:hexcolor/hexcolor.dart';
 
@@ -166,6 +170,7 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
   }
 
   void _initiatePayment() async {
+    Navigator.pop(this.context);
     this.showLoading("initiating payment...");
 
     final VoucherPaymentManager paymentManager = this.widget._paymentManager;
@@ -180,14 +185,62 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
     try {
       print("Voucher request is ${request.toJson()}");
       final http.Client client = http.Client();
-      final result = await paymentManager.payWithVoucher(request, client);
+      final response = await paymentManager.payWithVoucher(request, client);
+      print("voucher response is ${response.toJson()}");
       this.closeDialog();
-      print("voucher response is ${result.toJson()}");
+      
+      if (FlutterwaveUtils.SUCCESS == response.status &&
+          FlutterwaveUtils.CHARGE_INITIATED == response.message) {
+        this._verifyPayment(response.data.flwRef);
+      } else {
+        this.showSnackBar(response.message);
+      }
     } catch (error) {
       this.closeDialog();
       print("voucher error is ${error.toString()}");
     }
   }
 
-  void _onComplete(final ChargeResponse chargeResponse) {}
+  void _verifyPayment(final String flwRef) async {
+    final timeoutInMinutes = 2;
+    final timeOutInSeconds = timeoutInMinutes * 60;
+    final requestIntervalInSeconds = 15;
+    final numberOfTries = timeOutInSeconds / requestIntervalInSeconds;
+    int intialCount = 0;
+
+    this.showLoading("verifying payment...");
+    Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
+      if (intialCount == numberOfTries) {
+        timer.cancel();
+      }
+      final client = http.Client();
+      try {
+        final response = await FlutterwaveAPIUtils.verifyPayment(
+            flwRef,
+            client,
+            this.widget._paymentManager.publicKey,
+            this.widget._paymentManager.isDebugMode);
+        if ((response.data.status == FlutterwaveUtils.SUCCESSFUL ||
+            response.data.status == FlutterwaveUtils.SUCCESS) &&
+            response.data.amount == this.widget._paymentManager.amount &&
+            response.data.flwRef == flwRef) {
+          timer.cancel();
+          this._onComplete(response);
+        } else {
+          this.showSnackBar(response.message);
+        }
+      } catch (error) {
+        timer.cancel();
+        this.closeDialog();
+        this.showSnackBar(error.toString());
+      } finally {
+        intialCount = intialCount + 1;
+      }
+    });
+  }
+
+  void _onComplete(final ChargeResponse chargeResponse) {
+    this.closeDialog();
+    Navigator.pop(this.context, chargeResponse);
+  }
 }

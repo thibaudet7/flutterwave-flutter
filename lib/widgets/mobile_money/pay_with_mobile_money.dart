@@ -366,16 +366,6 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
   }
 
   Future<dynamic> openOtpScreen(String url) async {
-    // final String currency = this.widget._paymentManager.currency;
-    // final currencies = ["XAF", "XOF"];
-    // if (url == null && currencies.contains(currency)) {
-    //   this.showSnackBar("Please check your device.");
-    //   return;
-    // }
-    // if (url == null && !currencies.contains(currency)) {
-    //   this.showSnackBar("Unable to complete transaction");
-    //   return;
-    // }
     final result = await Navigator.push(
       this.context,
       MaterialPageRoute(
