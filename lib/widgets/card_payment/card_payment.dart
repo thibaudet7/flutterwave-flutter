@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/interfaces/card_payment_listener.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
+import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutterwave/core/card_payment_manager/card_payment_manager.dart';
 import 'package:flutterwave/models/requests/charge_card/charge_request_address.dart';
@@ -182,7 +183,10 @@ class _CardPaymentState extends State<CardPayment>
   void _onCardFormClick() {
     this._hideKeyboard();
     if (this._cardFormKey.currentState.validate()) {
-      this.showConfirmPaymentModal();
+      // this.showConfirmPaymentModal();
+      final CardPaymentManager pm = this.widget._paymentManager;
+      FlutterwaveViewUtils.showConfirmPaymentModal(
+          this.context, pm.currency, pm.amount, this._makeCardPayment);
     }
   }
 
@@ -190,17 +194,16 @@ class _CardPaymentState extends State<CardPayment>
     Navigator.of(this.context).pop();
     this.showLoading("initiating payment...");
     final ChargeCardRequest chargeCardRequest = ChargeCardRequest(
-      cardNumber: this._cardNumberFieldController.value.text.trim(),
-      cvv: this._cardCvvFieldController.value.text.trim(),
-      expiryMonth: this._cardMonthFieldController.value.text.trim(),
-      expiryYear: this._cardYearFieldController.value.text.trim(),
-      currency: this.widget._paymentManager.currency.trim(),
-      amount: this.widget._paymentManager.amount.trim(),
-      email: this.widget._paymentManager.email.trim(),
-      fullName: this.widget._paymentManager.fullName.trim(),
-      txRef: this.widget._paymentManager.txRef.trim(),
-      country: this.widget._paymentManager.country
-    );
+        cardNumber: this._cardNumberFieldController.value.text.trim(),
+        cvv: this._cardCvvFieldController.value.text.trim(),
+        expiryMonth: this._cardMonthFieldController.value.text.trim(),
+        expiryYear: this._cardYearFieldController.value.text.trim(),
+        currency: this.widget._paymentManager.currency.trim(),
+        amount: this.widget._paymentManager.amount.trim(),
+        email: this.widget._paymentManager.email.trim(),
+        fullName: this.widget._paymentManager.fullName.trim(),
+        txRef: this.widget._paymentManager.txRef.trim(),
+        country: this.widget._paymentManager.country);
     final client = http.Client();
     this
         .widget
@@ -263,22 +266,22 @@ class _CardPaymentState extends State<CardPayment>
     final result = await Navigator.of(this.context).push(MaterialPageRoute(
         builder: (context) => AuthorizationWebview(Uri.encodeFull(url))));
     if (result != null) {
-      if (result.runtimeType == " ".runtimeType) {
-        final flwRef = result;
-        this.showLoading("verifying payment...");
-        final response = await FlutterwaveAPIUtils.verifyPayment(
-            flwRef,
-            http.Client(),
-            this.widget._paymentManager.publicKey,
-            this.widget._paymentManager.isDebugMode);
-        this.closeDialog();
-        if (response.data.status == FlutterwaveUtils.SUCCESSFUL) {
-//          Navigator.pop(this.context, response);
-          this.onComplete(response);
-        }
-      } else {
-        this.closeDialog();
+      final bool hasError = result.runtimeType == " ".runtimeType;
+      this.closeDialog();
+      if (hasError) {
         this.showSnackBar(result["message"]);
+        return;
+      }
+      final flwRef = result;
+      this.showLoading("verifying payment...");
+      final response = await FlutterwaveAPIUtils.verifyPayment(
+          flwRef,
+          http.Client(),
+          this.widget._paymentManager.publicKey,
+          this.widget._paymentManager.isDebugMode);
+      this.closeDialog();
+      if (response.data.status == FlutterwaveUtils.SUCCESSFUL) {
+        this.onComplete(response);
       }
     } else {
       this.showSnackBar("Transaction cancelled");

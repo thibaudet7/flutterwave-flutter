@@ -406,10 +406,10 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
             response.data.amount == this.widget._paymentManager.amount &&
             response.data.flwRef == flwRef) {
           timer.cancel();
-          this._onComplete(response);
         } else {
           this.showSnackBar(response.message);
         }
+        this._onComplete(response);
       } catch (error) {
         timer.cancel();
         this.closeDialog();

@@ -32,8 +32,10 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
 
   @override
   Widget build(BuildContext context) {
+
     final FlutterwavePaymentManager paymentManager =
         this.widget._flutterwavePaymentManager;
+
     return MaterialApp(
       home: Scaffold(
         key: this._scaffoldKey,

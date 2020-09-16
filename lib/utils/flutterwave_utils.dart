@@ -101,16 +101,5 @@ class FlutterwaveUtils {
       FrancoPhoneCountry("SENEGAL", "SN"),
       FrancoPhoneCountry("CAMEROON", "CM")
     ];
-//    switch (currency) {
-//      case XAF:
-//        return [FrancoPhoneCountry("CAMEROON", "CM")];
-//      case XOF:
-//        return [
-//          FrancoPhoneCountry("BURKINA FASO", "BF"),
-//          FrancoPhoneCountry("COTE D'IVOIRE", "CI"),
-//          FrancoPhoneCountry("GUINES", "GN"),
-//          FrancoPhoneCountry("SENEGAL", "SN")
-//        ];
-//    }
   }
 }

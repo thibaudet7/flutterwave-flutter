@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/models/requests/mpesa/mpesa_request.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
+import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutterwave/core/mpesa/mpesa_payment_manager.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
@@ -98,7 +99,8 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
   void _onPayPressed() {
     if (this._formKey.currentState.validate()) {
       this._removeFocusFromView();
-      this._handlePayment();
+      final MpesaPaymentManager pm = this.widget._paymentManager;
+      FlutterwaveViewUtils.showConfirmPaymentModal(this.context, pm.currency, pm.amount, this._handlePayment);
     }
   }
 
@@ -151,6 +153,8 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
   }
 
   void _handlePayment() async {
+    Navigator.pop(this.context);
+
     this.showLoading("initiating payment...");
     final MpesaPaymentManager mpesaPaymentManager = this.widget._paymentManager;
 
