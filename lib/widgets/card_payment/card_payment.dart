@@ -30,11 +30,11 @@ class _CardPaymentState extends State<CardPayment>
   BuildContext loadingDialogContext;
 
   final TextEditingController _cardNumberFieldController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _cardMonthFieldController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _cardYearFieldController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _cardCvvFieldController = TextEditingController();
 
   @override
@@ -92,10 +92,7 @@ class _CardPaymentState extends State<CardPayment>
                 Row(
                   children: [
                     Container(
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width / 5,
+                      width: MediaQuery.of(context).size.width / 5,
                       margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -114,10 +111,7 @@ class _CardPaymentState extends State<CardPayment>
                       ),
                     ),
                     Container(
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width / 5,
+                      width: MediaQuery.of(context).size.width / 5,
                       margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -136,10 +130,7 @@ class _CardPaymentState extends State<CardPayment>
                       ),
                     ),
                     Container(
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width / 5,
+                      width: MediaQuery.of(context).size.width / 5,
                       margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
@@ -156,9 +147,7 @@ class _CardPaymentState extends State<CardPayment>
                         ),
                         controller: this._cardCvvFieldController,
                         validator: (value) =>
-                        value.isEmpty
-                            ? "cvv is required"
-                            : null,
+                            value.isEmpty ? "cvv is required" : null,
                       ),
                     ),
                   ],
@@ -201,15 +190,17 @@ class _CardPaymentState extends State<CardPayment>
     Navigator.of(this.context).pop();
     this.showLoading("initiating payment...");
     final ChargeCardRequest chargeCardRequest = ChargeCardRequest(
-        cardNumber: this._cardNumberFieldController.value.text.trim(),
-        cvv: this._cardCvvFieldController.value.text.trim(),
-        expiryMonth: this._cardMonthFieldController.value.text.trim(),
-        expiryYear: this._cardYearFieldController.value.text.trim(),
-        currency: this.widget._paymentManager.currency.trim(),
-        amount: this.widget._paymentManager.amount.trim(),
-        email: this.widget._paymentManager.email.trim(),
-        fullName: this.widget._paymentManager.fullName.trim(),
-        txRef: this.widget._paymentManager.txRef.trim());
+      cardNumber: this._cardNumberFieldController.value.text.trim(),
+      cvv: this._cardCvvFieldController.value.text.trim(),
+      expiryMonth: this._cardMonthFieldController.value.text.trim(),
+      expiryYear: this._cardYearFieldController.value.text.trim(),
+      currency: this.widget._paymentManager.currency.trim(),
+      amount: this.widget._paymentManager.amount.trim(),
+      email: this.widget._paymentManager.email.trim(),
+      fullName: this.widget._paymentManager.fullName.trim(),
+      txRef: this.widget._paymentManager.txRef.trim(),
+      country: this.widget._paymentManager.country
+    );
     final client = http.Client();
     this
         .widget
@@ -227,10 +218,8 @@ class _CardPaymentState extends State<CardPayment>
           content: Container(
             margin: EdgeInsets.fromLTRB(20, 30, 20, 20),
             child: Text(
-              "You will be charged a total of ${this.widget._paymentManager
-                  .currency}"
-                  "${this.widget._paymentManager
-                  .amount}. Do you wish to continue? ",
+              "You will be charged a total of ${this.widget._paymentManager.currency}"
+              "${this.widget._paymentManager.amount}. Do you wish to continue? ",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.black,
@@ -261,9 +250,7 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   String _validateCardField(String value) {
-    return value
-        .trim()
-        .isEmpty ? "Please fill this" : null;
+    return value.trim().isEmpty ? "Please fill this" : null;
   }
 
   void _hideKeyboard() {
@@ -329,7 +316,7 @@ class _CardPaymentState extends State<CardPayment>
     if (otp == null) return;
     this.showLoading("verifying payment...");
     final ChargeResponse chargeResponse =
-    await this.widget._paymentManager.addOTP(otp, response.data.flwRef);
+        await this.widget._paymentManager.addOTP(otp, response.data.flwRef);
     this.closeDialog();
     if (chargeResponse.message == FlutterwaveUtils.CHARGE_VALIDATED) {
       this.showLoading("verifying transaction...");
@@ -343,7 +330,8 @@ class _CardPaymentState extends State<CardPayment>
   void _handleTransactionVerification(
       final ChargeResponse chargeResponse) async {
     final verifyResponse = await FlutterwaveAPIUtils.verifyPayment(
-        chargeResponse.data.flwRef, http.Client(),
+        chargeResponse.data.flwRef,
+        http.Client(),
         this.widget._paymentManager.publicKey,
         this.widget._paymentManager.isDebugMode);
     this.closeDialog();
