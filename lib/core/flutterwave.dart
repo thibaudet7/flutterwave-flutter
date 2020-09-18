@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterwave/models/responses/charge_response.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:flutterwave/widgets/home/flutterwave_payment.dart';
 
@@ -151,42 +152,44 @@ class Flutterwave {
     }
   }
 
-  void initializeForUiPayments() {
+  Future<ChargeResponse> initializeForUiPayments() async {
     FlutterwavePaymentManager paymentManager = FlutterwavePaymentManager(
-      publicKey: this.publicKey,
-      encryptionKey: this.encryptionKey,
-      currency: this.currency,
-      email: this.email,
-      fullName: this.fullName,
-      amount: this.amount,
-      txRef: this.txRef,
-      isDebugMode: this.isDebugMode,
-      narration: this.narration,
-      isPermanent: this.isPermanent,
-      phoneNumber: this.phoneNumber,
-      frequency: this.frequency,
-      duration: this.duration,
-      acceptAccountPayment: this.acceptAccountPayment,
-      acceptBankTransferPayment: this.acceptBankTransferPayment,
-      acceptCardPayment: this.acceptCardPayment,
-      acceptUSSDPayment: this.acceptUSSDPayment,
-      acceptUKAccountPayment: this.acceptUKAccountPayment,
-      acceptSouthAfricaBankPayment: this.acceptSouthAfricaBankPayment,
-      acceptRwandaMoneyPayment: this.acceptRwandaMoneyPayment,
-      acceptMpesaPayment: this.acceptMpesaPayment,
-      acceptZambiaPayment: this.acceptZambiaPayment,
-      acceptGhanaPayment: this.acceptGhanaPayment,
-      acceptUgandaPayment: this.acceptUgandaPayment,
-      acceptFancophoneMobileMoney: this.acceptFrancophoneMobileMoney,
-      acceptBarterPayment: this.acceptBarterPayment,
-      acceptVoucherPayment: this.acceptVoucherPayment,
-      country: this._setCountry()
-    );
-    return this._launchPaymentScreen(paymentManager);
+        publicKey: this.publicKey,
+        encryptionKey: this.encryptionKey,
+        currency: this.currency,
+        email: this.email,
+        fullName: this.fullName,
+        amount: this.amount,
+        txRef: this.txRef,
+        isDebugMode: this.isDebugMode,
+        narration: this.narration,
+        isPermanent: this.isPermanent,
+        phoneNumber: this.phoneNumber,
+        frequency: this.frequency,
+        duration: this.duration,
+        acceptAccountPayment: this.acceptAccountPayment,
+        acceptBankTransferPayment: this.acceptBankTransferPayment,
+        acceptCardPayment: this.acceptCardPayment,
+        acceptUSSDPayment: this.acceptUSSDPayment,
+        acceptUKAccountPayment: this.acceptUKAccountPayment,
+        acceptSouthAfricaBankPayment: this.acceptSouthAfricaBankPayment,
+        acceptRwandaMoneyPayment: this.acceptRwandaMoneyPayment,
+        acceptMpesaPayment: this.acceptMpesaPayment,
+        acceptZambiaPayment: this.acceptZambiaPayment,
+        acceptGhanaPayment: this.acceptGhanaPayment,
+        acceptUgandaPayment: this.acceptUgandaPayment,
+        acceptFancophoneMobileMoney: this.acceptFrancophoneMobileMoney,
+        acceptBarterPayment: this.acceptBarterPayment,
+        acceptVoucherPayment: this.acceptVoucherPayment,
+        country: this._setCountry());
+
+    final chargeResponse = await this._launchPaymentScreen(paymentManager);
+    return chargeResponse;
   }
 
-  void _launchPaymentScreen(final FlutterwavePaymentManager paymentManager) {
-    Navigator.push(
+  Future<ChargeResponse> _launchPaymentScreen(
+      final FlutterwavePaymentManager paymentManager) async {
+    return await Navigator.push(
       this.context,
       MaterialPageRoute(builder: (context) => FlutterwaveUI(paymentManager)),
     );

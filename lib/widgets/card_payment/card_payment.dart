@@ -266,10 +266,11 @@ class _CardPaymentState extends State<CardPayment>
     final result = await Navigator.of(this.context).push(MaterialPageRoute(
         builder: (context) => AuthorizationWebview(Uri.encodeFull(url))));
     if (result != null) {
-      final bool hasError = result.runtimeType == " ".runtimeType;
+      print("result in webview issss $result");
+      final bool hasError = result.runtimeType != " ".runtimeType;
       this.closeDialog();
       if (hasError) {
-        this.showSnackBar(result["message"]);
+        this.showSnackBar(result["error"]);
         return;
       }
       final flwRef = result;

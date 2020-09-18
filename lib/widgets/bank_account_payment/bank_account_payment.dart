@@ -233,34 +233,57 @@ class RequestBankAccountState extends State<RequestBankAccount> {
         ._paymentManager
         .payWithAccount(request, http.Client());
 
-    print("Error paying with account is ${response.toJson()}");
+    print("Response paying with account is ${response.toJson()}");
 
     this.closeDialog();
     if (response.data == null || response.status == FlutterwaveUtils.ERROR) {
       this.showSnackBar(response.message);
       return;
     }
-    if (response.data.processorResponse ==
-            FlutterwaveUtils.PENDING_OTP_VALIDATION ||
-        (response.meta != null &&
-            response.meta.authorization != null &&
-            response.data.status == FlutterwaveUtils.PENDING)) {
-      if (response.data.processorResponse == FlutterwaveUtils.PENDING) {
-        this._handleExtraAuthentication(response);
-      } else {
-        this.showSnackBar(
-            "Unable to continue payment with card authentication mode ${response.meta.authorization.mode}");
-      }
-      return;
-    }
+
     if (response.data.status == FlutterwaveUtils.SUCCESSFUL &&
         response.data.processorResponse ==
             FlutterwaveUtils.APPROVED_SUCCESSFULLY) {
       this._verifyPayment(response);
-    } else {
-      this.closeDialog();
-      this.showSnackBar(response.message);
+      return;
     }
+
+    if (response.data.processorResponse ==
+        FlutterwaveUtils.PENDING_OTP_VALIDATION) {
+      this._handleOtp(response);
+      return;
+    }
+
+    if (response.meta != null &&
+        response.meta.authorization != null &&
+        response.data.status == FlutterwaveUtils.PENDING) {
+      this._handleExtraAuthentication(response);
+      return;
+    }
+
+    final errorMessage = response.message == null
+        ? "Unable to continue payment with account"
+        : response.message;
+    this.closeDialog();
+    this.showSnackBar(errorMessage);
+    // if (response.data.processorResponse == FlutterwaveUtils.PENDING_OTP_VALIDATION || (response.meta != null && response.meta.authorization != null && response.data.status == FlutterwaveUtils.PENDING)) {
+    //   if (response.data.status == FlutterwaveUtils.PENDING) {
+    //     this._handleExtraAuthentication(response);
+    //   } else {
+    //     this.showSnackBar(
+    //         "Unable to continue payment with card authentication mode ${response.meta.authorization.mode}");
+    //   }
+    //   return;
+    // }
+
+    // if (response.data.status == FlutterwaveUtils.SUCCESSFUL &&
+    //     response.data.processorResponse ==
+    //         FlutterwaveUtils.APPROVED_SUCCESSFULLY) {
+    //   this._verifyPayment(response);
+    // } else {
+    //   this.closeDialog();
+    //   this.showSnackBar(response.message);
+    // }
   }
 
   void _handleExtraAuthentication(ChargeResponse response) async {
@@ -282,7 +305,7 @@ class RequestBankAccountState extends State<RequestBankAccount> {
       }
     } else {
       this.closeDialog();
-      this.showSnackBar("Unable to continue payment");
+      this.showSnackBar("Unable to authenticate payment. Please contact support.");
     }
   }
 
