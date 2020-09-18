@@ -172,6 +172,6 @@ class CardPaymentManager {
 
   Future<ChargeResponse> addOTP(String otp, String flwRef) async {
     return FlutterwaveAPIUtils.validatePayment(
-        otp, flwRef, http.Client(), this.isDebugMode, this.publicKey);
+        otp, flwRef, http.Client(), this.isDebugMode, this.publicKey, false);
   }
 }

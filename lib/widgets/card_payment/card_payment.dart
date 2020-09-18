@@ -183,7 +183,6 @@ class _CardPaymentState extends State<CardPayment>
   void _onCardFormClick() {
     this._hideKeyboard();
     if (this._cardFormKey.currentState.validate()) {
-      // this.showConfirmPaymentModal();
       final CardPaymentManager pm = this.widget._paymentManager;
       FlutterwaveViewUtils.showConfirmPaymentModal(
           this.context, pm.currency, pm.amount, this._makeCardPayment);
@@ -192,7 +191,7 @@ class _CardPaymentState extends State<CardPayment>
 
   void _makeCardPayment() {
     Navigator.of(this.context).pop();
-    this.showLoading("initiating payment...");
+    this.showLoading(FlutterwaveUtils.INITIATING_PAYMENT);
     final ChargeCardRequest chargeCardRequest = ChargeCardRequest(
         cardNumber: this._cardNumberFieldController.value.text.trim(),
         cvv: this._cardCvvFieldController.value.text.trim(),
@@ -274,7 +273,7 @@ class _CardPaymentState extends State<CardPayment>
         return;
       }
       final flwRef = result;
-      this.showLoading("verifying payment...");
+      this.showLoading(FlutterwaveUtils.VERIFYING);
       final response = await FlutterwaveAPIUtils.verifyPayment(
           flwRef,
           http.Client(),
@@ -295,7 +294,7 @@ class _CardPaymentState extends State<CardPayment>
     final ChargeRequestAddress addressDetails = await Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => RequestAddress()));
     if (addressDetails != null) {
-      this.showLoading("verifying address...");
+      this.showLoading(FlutterwaveUtils.VERIFYING_ADDRESS);
       this.widget._paymentManager.addAddress(addressDetails);
       return;
     }
@@ -308,7 +307,7 @@ class _CardPaymentState extends State<CardPayment>
     final pin = await Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => RequestPin()));
     if (pin == null) return;
-    this.showLoading("authenticating with pin...");
+    this.showLoading(FlutterwaveUtils.AUTHENTICATING_PIN);
     this.widget._paymentManager.addPin(pin);
   }
 
@@ -318,12 +317,12 @@ class _CardPaymentState extends State<CardPayment>
     final otp = await Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => RequestOTP(message)));
     if (otp == null) return;
-    this.showLoading("verifying payment...");
+    this.showLoading(FlutterwaveUtils.VERIFYING);
     final ChargeResponse chargeResponse =
         await this.widget._paymentManager.addOTP(otp, response.data.flwRef);
     this.closeDialog();
     if (chargeResponse.message == FlutterwaveUtils.CHARGE_VALIDATED) {
-      this.showLoading("verifying transaction...");
+      this.showLoading(FlutterwaveUtils.VERIFYING);
       this._handleTransactionVerification(chargeResponse);
     } else {
       this.closeDialog();

@@ -23,8 +23,13 @@ class FlutterwaveUtils {
 
   static const String VALIDATE_CHARGE = "validate-charge";
   static const String VERIFY_TRANSACTION = "mpesa-verify";
-
   static const String DEFAULT_REDIRECT_URL = "https://flutterwave.com/ng/";
+
+  static const String VERIFYING = "verifying transaction...";
+  static const String VERIFYING_ADDRESS = "verifying address...";
+  static const String AUTHENTICATING_PIN = "authenticating with pin...";
+  static const String INITIATING_PAYMENT = "initiating payment...";
+  static const String VALIDATING_OTP = "validating otp...";
 
   static const String NGN = "NGN";
   static const String KES = "KES";
@@ -94,12 +99,12 @@ class FlutterwaveUtils {
 
   static List<FrancoPhoneCountry> getFrancoPhoneCountries(
       final String currency) {
+    if (currency == XAF) return [FrancoPhoneCountry("CAMEROON", "CM")];
     return [
       FrancoPhoneCountry("BURKINA FASO", "BF"),
       FrancoPhoneCountry("COTE D'IVOIRE", "CI"),
       FrancoPhoneCountry("GUINEA", "GN"),
       FrancoPhoneCountry("SENEGAL", "SN"),
-      FrancoPhoneCountry("CAMEROON", "CM")
     ];
   }
 }

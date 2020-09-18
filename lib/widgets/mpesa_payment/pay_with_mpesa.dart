@@ -99,8 +99,14 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
   void _onPayPressed() {
     if (this._formKey.currentState.validate()) {
       this._removeFocusFromView();
+      if (this._phoneNumberController.text != null &&
+          this._phoneNumberController.text.isNotEmpty) {
+        this.widget._paymentManager.phoneNumber =
+            this._phoneNumberController.text;
+      }
       final MpesaPaymentManager pm = this.widget._paymentManager;
-      FlutterwaveViewUtils.showConfirmPaymentModal(this.context, pm.currency, pm.amount, this._handlePayment);
+      FlutterwaveViewUtils.showConfirmPaymentModal(
+          this.context, pm.currency, pm.amount, this._handlePayment);
     }
   }
 
@@ -155,7 +161,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
   void _handlePayment() async {
     Navigator.pop(this.context);
 
-    this.showLoading("initiating payment...");
+    this.showLoading(FlutterwaveUtils.INITIATING_PAYMENT);
     final MpesaPaymentManager mpesaPaymentManager = this.widget._paymentManager;
 
     final MpesaRequest request = MpesaRequest(
@@ -191,14 +197,17 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
     final numberOfTries = timeOutInSeconds / requestIntervalInSeconds;
     int intialCount = 0;
 
-    this.showLoading("verifying payment...");
+    ChargeResponse response;
+
+    this.showLoading(FlutterwaveUtils.VERIFYING);
     final client = http.Client();
     Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
       try {
         if (intialCount == numberOfTries) {
           timer.cancel();
+          return this._onComplete(response);
         }
-        final response = await FlutterwaveAPIUtils.verifyPayment(
+        response = await FlutterwaveAPIUtils.verifyPayment(
             flwRef,
             client,
             this.widget._paymentManager.publicKey,

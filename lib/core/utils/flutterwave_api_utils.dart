@@ -48,11 +48,12 @@ class FlutterwaveAPIUtils {
   }
 
   static Future<ChargeResponse> validatePayment(
-      String otp, String flwRef, http.Client client, final bool isDebugMode, final String publicKey) async {
+      String otp, String flwRef, http.Client client, final bool isDebugMode, final String publicKey, final isBankAccount) async {
     final url = FlutterwaveUtils.getBaseUrl(isDebugMode) + FlutterwaveUtils.VALIDATE_CHARGE;
     final ValidateChargeRequest chargeRequest =
-    ValidateChargeRequest(otp, flwRef);
+    ValidateChargeRequest(otp, flwRef, isBankAccount);
     final payload = chargeRequest.toJson();
+    print("validate payload is ${payload}");
     try {
       final http.Response response = await client.post(url,
           headers: {HttpHeaders.authorizationHeader: publicKey},

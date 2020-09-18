@@ -148,7 +148,7 @@ class _PayWithUssdState extends State<PayWithUssd> {
   void _payWithUSSD() async {
     Navigator.pop(this.context);
 
-    this.showLoading("initiating payment...");
+    this.showLoading(FlutterwaveUtils.INITIATING_PAYMENT);
     final USSDPaymentManager ussdPaymentManager = this.widget._paymentManager;
     final request = USSDRequest(
         amount: ussdPaymentManager.amount,
@@ -184,7 +184,7 @@ class _PayWithUssdState extends State<PayWithUssd> {
     int intialCount = 0;
 
     if (this._chargeResponse != null) {
-      this.showLoading("verifying payment...");
+      this.showLoading(FlutterwaveUtils.VERIFYING);
       final client = http.Client();
       ChargeResponse response;
       Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {

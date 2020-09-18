@@ -1,8 +1,9 @@
 class ValidateChargeRequest {
   String otp;
   String flwRef;
+  bool isBankAccount;
 
-  ValidateChargeRequest(this.otp, this.flwRef);
+  ValidateChargeRequest(this.otp, this.flwRef, [this.isBankAccount = false]);
 
   ValidateChargeRequest.fromJson(Map<String, dynamic> json) {
     this.otp = json["otp"];
@@ -13,6 +14,9 @@ class ValidateChargeRequest {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data["otp"] = this.otp;
     data["flw_ref"] = this.flwRef;
+    if (this.isBankAccount) {
+      data["type"] = "account";
+    }
     return data;
   }
 }

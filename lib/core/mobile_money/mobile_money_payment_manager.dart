@@ -36,6 +36,7 @@ class MobileMoneyPaymentManager {
     print("MM Request is $requestBody");
     final url = FlutterwaveUtils.getBaseUrl(this.isDebugMode) +
         FlutterwaveUtils.getMobileMoneyUrl(this.currency);
+    print("MM URL is $url");
     try {
       final http.Response response = await client.post(url,
           headers: {HttpHeaders.authorizationHeader: this.publicKey},

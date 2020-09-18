@@ -156,9 +156,9 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
 
   void _onPayPressed() {
     if (this._formKey.currentState.validate()) {
-      final MobileMoneyPaymentManager pm =
-          this.widget._paymentManager;
-      FlutterwaveViewUtils.showConfirmPaymentModal(this.context, pm.currency, pm.amount, this._handlePayment);
+      final MobileMoneyPaymentManager pm = this.widget._paymentManager;
+      FlutterwaveViewUtils.showConfirmPaymentModal(
+          this.context, pm.currency, pm.amount, this._handlePayment);
       // this._handlePayment();
     }
   }
@@ -198,9 +198,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
   }
 
   void _showBottomSheet(final Widget widget) {
-    showModalBottomSheet(
-        context: this.context,
-        builder: (context) => widget);
+    showModalBottomSheet(context: this.context, builder: (context) => widget);
   }
 
   void _showFrancophoneBottomSheet() {
@@ -320,11 +318,16 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
 
   void _handlePayment() async {
     Navigator.pop(this.context);
-    
-    this.showLoading("initiating payment...");
+
+    this.showLoading(FlutterwaveUtils.INITIATING_PAYMENT);
 
     final MobileMoneyPaymentManager mobileMoneyPaymentManager =
         this.widget._paymentManager;
+    if (this._phoneNumberController.text != null &&
+        this._phoneNumberController.text.isNotEmpty) {
+      this.widget._paymentManager.phoneNumber =
+          this._phoneNumberController.text;
+    }
     final MobileMoneyRequest request = MobileMoneyRequest(
       amount: mobileMoneyPaymentManager.amount,
       currency: mobileMoneyPaymentManager.currency,
@@ -344,6 +347,8 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
       final response =
           await mobileMoneyPaymentManager.payWithMobileMoney(request, client);
       this.closeDialog();
+
+      print("MoMo response is ==> ${response.toJson()}");
       if (FlutterwaveUtils.SUCCESS == response.status &&
           FlutterwaveUtils.CHARGE_INITIATED == response.message) {
         if (response.meta.authorization.mode == Authorization.REDIRECT &&
@@ -383,20 +388,25 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
   }
 
   void _verifyPayment(final String flwRef) async {
-    final timeoutInMinutes = 2;
+    final timeoutInMinutes = 4;
     final timeOutInSeconds = timeoutInMinutes * 60;
     final requestIntervalInSeconds = 15;
     final numberOfTries = timeOutInSeconds / requestIntervalInSeconds;
     int intialCount = 0;
 
-    this.showLoading("verifying payment...");
+    ChargeResponse response;
+
+    this.showLoading(FlutterwaveUtils.VERIFYING);
+    print("number of tries should be $numberOfTries");
+
     Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
-      if (intialCount == numberOfTries) {
+      if (intialCount >= numberOfTries && response != null) {
         timer.cancel();
+        return this._onComplete(response);
       }
       final client = http.Client();
       try {
-        final response = await FlutterwaveAPIUtils.verifyPayment(
+        response = await FlutterwaveAPIUtils.verifyPayment(
             flwRef,
             client,
             this.widget._paymentManager.publicKey,
@@ -405,17 +415,20 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
                 response.data.status == FlutterwaveUtils.SUCCESS) &&
             response.data.amount == this.widget._paymentManager.amount &&
             response.data.flwRef == flwRef) {
+          print("sucesssssssssssssssssssss ====> ${response.toJson()} \n");
           timer.cancel();
+          this._onComplete(response);
         } else {
-          this.showSnackBar(response.message);
+          print("Not successful yet ====> ${response.toJson()} \n");
+          print("initial count in else is $intialCount");
         }
-        this._onComplete(response);
       } catch (error) {
         timer.cancel();
         this.closeDialog();
         this.showSnackBar(error.toString());
       } finally {
         intialCount = intialCount + 1;
+        print("initial count in finally is $intialCount \n");
       }
     });
   }
