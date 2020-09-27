@@ -17,7 +17,6 @@ class FlutterwaveAPIUtils {
         FlutterwaveUtils.GET_BANKS_URL,
       );
       if (response.statusCode == 200) {
-        print("banks is ${jsonDecode(response.body).runtimeType}");
         final List<dynamic> jsonDecoded = jsonDecode(response.body);
         final banks =
             jsonDecoded.map((json) => GetBanksResponse.fromJson(json)).toList();

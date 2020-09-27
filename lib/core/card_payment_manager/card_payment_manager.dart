@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/interfaces/card_payment_listener.dart';
 import 'package:flutterwave/models/requests/authorization.dart';
 import 'package:flutterwave/models/requests/charge_card/charge_card_request.dart';
@@ -64,7 +64,6 @@ class CardPaymentManager {
       final ChargeCardRequest chargeCardRequest) async {
 
     this.chargeCardRequest = chargeCardRequest;
-    print("request is ${chargeCardRequest.toJson()}");
     if (this.cardPaymentListener == null) {
       this.cardPaymentListener.onError("No CardPaymentListener Attached!");
       return;
@@ -75,7 +74,6 @@ class CardPaymentManager {
 
     final url = FlutterwaveUtils.getBaseUrl(this.isDebugMode) +
         FlutterwaveUtils.CHARGE_CARD_URL;
-    print("url iss ==> $url");
     final http.Response response = await client.post(url,
         headers: {HttpHeaders.authorizationHeader: this.publicKey},
         body: encryptedPayload);
@@ -86,8 +84,6 @@ class CardPaymentManager {
   void _handleResponse(final http.Response response) {
     try {
       final responseBody = ChargeResponse.fromJson(jsonDecode(response.body));
-
-      print("response is ${responseBody.toJson()}");
 
       if (response.statusCode == 200) {
         final bool requiresExtraAuth =

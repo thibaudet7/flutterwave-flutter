@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/models/francophone_country.dart';
 import 'package:flutterwave/models/requests/authorization.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
@@ -348,7 +348,6 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
           await mobileMoneyPaymentManager.payWithMobileMoney(request, client);
       this.closeDialog();
 
-      print("MoMo response is ==> ${response.toJson()}");
       if (FlutterwaveUtils.SUCCESS == response.status &&
           FlutterwaveUtils.CHARGE_INITIATED == response.message) {
         if (response.meta.authorization.mode == Authorization.REDIRECT &&
@@ -397,7 +396,6 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
     ChargeResponse response;
 
     this.showLoading(FlutterwaveUtils.VERIFYING);
-    print("number of tries should be $numberOfTries");
 
     Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
       if (intialCount >= numberOfTries && response != null) {
@@ -415,12 +413,8 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
                 response.data.status == FlutterwaveUtils.SUCCESS) &&
             response.data.amount == this.widget._paymentManager.amount &&
             response.data.flwRef == flwRef) {
-          print("sucesssssssssssssssssssss ====> ${response.toJson()} \n");
           timer.cancel();
           this._onComplete(response);
-        } else {
-          print("Not successful yet ====> ${response.toJson()} \n");
-          print("initial count in else is $intialCount");
         }
       } catch (error) {
         timer.cancel();
@@ -428,7 +422,6 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
         this.showSnackBar(error.toString());
       } finally {
         intialCount = intialCount + 1;
-        print("initial count in finally is $intialCount \n");
       }
     });
   }

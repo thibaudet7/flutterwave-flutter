@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/core/pay_with_account_manager/bank_account_manager.dart';
 import 'package:flutterwave/models/requests/authorization.dart';
 import 'package:flutterwave/models/requests/pay_with_bank_account/pay_with_bank_account.dart';
@@ -9,20 +10,19 @@ import 'package:flutterwave/widgets/card_payment/request_otp.dart';
 import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/models/responses/get_bank/get_bank_response.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-class RequestBankAccount extends StatefulWidget {
+class PayWithBankAccount extends StatefulWidget {
   final BankAccountPaymentManager _paymentManager;
 
-  RequestBankAccount(this._paymentManager);
+  PayWithBankAccount(this._paymentManager);
 
   @override
-  RequestBankAccountState createState() => RequestBankAccountState();
+  PayWithBankAccountState createState() => PayWithBankAccountState();
 }
 
-class RequestBankAccountState extends State<RequestBankAccount> {
+class PayWithBankAccountState extends State<PayWithBankAccount> {
   GetBanksResponse selectedBank;
   PersistentBottomSheetController bottomSheet;
   Future<List<GetBanksResponse>> banks;

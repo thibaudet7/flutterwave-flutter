@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/core/voucher_payment/voucher_payment_manager.dart';
 import 'package:flutterwave/models/requests/voucher/voucher_payment_request.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
@@ -163,15 +163,12 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
       FlutterwaveViewUtils.showConfirmPaymentModal(
           this.context, paymentManager.currency, paymentManager.amount,
           this._initiatePayment);
-
-      print("Should have called pay pressed");
-      // this._initiatePayment();
     }
   }
 
   void _initiatePayment() async {
     Navigator.pop(this.context);
-    this.showLoading("initiating payment...");
+    this.showLoading(FlutterwaveUtils.INITIATING_PAYMENT);
 
     final VoucherPaymentManager paymentManager = this.widget._paymentManager;
     final VoucherPaymentRequest request = VoucherPaymentRequest(
@@ -183,10 +180,8 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
         phoneNumber: paymentManager.phoneNumber,
         pin: this._voucherPinController.text.toString());
     try {
-      print("Voucher request is ${request.toJson()}");
       final http.Client client = http.Client();
       final response = await paymentManager.payWithVoucher(request, client);
-      print("voucher response is ${response.toJson()}");
       this.closeDialog();
       
       if (FlutterwaveUtils.SUCCESS == response.status &&
@@ -197,7 +192,6 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
       }
     } catch (error) {
       this.closeDialog();
-      print("voucher error is ${error.toString()}");
     }
   }
 
@@ -208,7 +202,7 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
     final numberOfTries = timeOutInSeconds / requestIntervalInSeconds;
     int intialCount = 0;
 
-    this.showLoading("verifying payment...");
+    this.showLoading(FlutterwaveUtils.VERIFYING);
     Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
       if (intialCount == numberOfTries) {
         timer.cancel();

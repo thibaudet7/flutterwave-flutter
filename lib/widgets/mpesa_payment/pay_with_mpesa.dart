@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/models/requests/mpesa/mpesa_request.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
 import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
@@ -176,12 +176,10 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
     try {
       final response = await mpesaPaymentManager.payWithMpesa(request, client);
       this.closeDialog();
-      print("Mpesa response is ==> ${response.toJson()}");
       if (FlutterwaveUtils.SUCCESS == response.status &&
           FlutterwaveUtils.CHARGE_INITIATED == response.message) {
         this._verifyPayment(response.data.flwRef);
       } else {
-        print("Mpesa initiate failed ${response.toJson()}");
         this.showSnackBar(response.message);
       }
     } catch (error) {
@@ -222,7 +220,6 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
           timer.cancel();
           this._onComplete(response);
         } else {
-          print("Mpesa verify failed ${response.toJson()}");
           this.showSnackBar(response.message);
         }
       } catch (error) {

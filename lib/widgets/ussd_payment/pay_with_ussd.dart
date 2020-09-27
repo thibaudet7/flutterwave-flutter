@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutterwave/core/utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutterwave/core/ussd_payment_manager/ussd_manager.dart';
@@ -137,7 +137,6 @@ class _PayWithUssdState extends State<PayWithUssd> {
 
   void _initiateUSSDPayment() async {
     if (this.selectedBank != null) {
-      // Navigator.pop(this.context);
       final USSDPaymentManager pm = this.widget._paymentManager;
      FlutterwaveViewUtils.showConfirmPaymentModal(this.context, pm.currency, pm.amount, this._payWithUSSD);
     } else {
@@ -199,8 +198,6 @@ class _PayWithUssdState extends State<PayWithUssd> {
               client,
               this.widget._paymentManager.publicKey,
               this.widget._paymentManager.isDebugMode);
-
-          print("verify response in USSD is => ${response.toJson()}");
 
           if (response.data.status == FlutterwaveUtils.SUCCESSFUL &&
               this._chargeResponse.data.flwRef == response.data.flwRef &&
