@@ -4,14 +4,13 @@ import 'package:flutterwave/core/pay_with_account_manager/bank_account_manager.d
 import 'package:flutterwave/models/requests/authorization.dart';
 import 'package:flutterwave/models/requests/pay_with_bank_account/pay_with_bank_account.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
-import 'package:flutterwave/utils/flutterwave_utils.dart';
+import 'package:flutterwave/models/responses/get_bank/get_bank_response.dart';
+import 'package:flutterwave/utils/flutterwave_constants.dart';
 import 'package:flutterwave/widgets/card_payment/authorization_webview.dart';
 import 'package:flutterwave/widgets/card_payment/request_otp.dart';
 import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
-import 'package:http/http.dart' as http;
-
-import 'package:flutterwave/models/responses/get_bank/get_bank_response.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart' as http;
 
 class PayWithBankAccount extends StatefulWidget {
   final BankAccountPaymentManager _paymentManager;
@@ -214,7 +213,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
   void _payWithBankAccount() async {
     Navigator.pop(this.context);
 
-    this.showLoading(FlutterwaveUtils.INITIATING_PAYMENT);
+    this.showLoading(FlutterwaveConstants.INITIATING_PAYMENT);
 
     final BankAccountPaymentRequest request = BankAccountPaymentRequest(
         amount: this.widget._paymentManager.amount,
@@ -240,39 +239,39 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
   }
 
   void _handleResponse(final ChargeResponse response) {
-    if (response.data == null || response.status == FlutterwaveUtils.ERROR) {
+    if (response.data == null || response.status == FlutterwaveConstants.ERROR) {
       this.showSnackBar(response.message);
       return;
     }
 
-    if (response.data.status == FlutterwaveUtils.SUCCESSFUL &&
+    if (response.data.status == FlutterwaveConstants.SUCCESSFUL &&
         response.data.processorResponse ==
-            FlutterwaveUtils.APPROVED_SUCCESSFULLY) {
+            FlutterwaveConstants.APPROVED_SUCCESSFULLY) {
       this._verifyPayment(response);
       return;
     }
 
     if (response.data.processorResponse ==
-        FlutterwaveUtils.PENDING_OTP_VALIDATION) {
+        FlutterwaveConstants.PENDING_OTP_VALIDATION) {
       this._handleOtp(response);
       return;
     }
 
     if (response.meta != null &&
         response.meta.authorization != null &&
-        response.data.status == FlutterwaveUtils.PENDING) {
+        response.data.status == FlutterwaveConstants.PENDING) {
       this._handleExtraAuthentication(response);
       return;
     }
     this.closeDialog();
 
-    if ((response.data.status == FlutterwaveUtils.PENDING) &&
+    if ((response.data.status == FlutterwaveConstants.PENDING) &&
         (response.data.authUrl != null) &&
         response.data.authUrl.isNotEmpty) {
       this._handleWebAuthorisation(response);
     }
 
-    if ((response.data.status == FlutterwaveUtils.PENDING) &&
+    if ((response.data.status == FlutterwaveConstants.PENDING) &&
         (response.meta == null ||
             response.meta.authorization == null ||
             response.meta.authorization.mode == null)) {
@@ -312,7 +311,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
   }
 
   void _verifyPayment(ChargeResponse chargeResponse) async {
-    this.showLoading(FlutterwaveUtils.VERIFYING);
+    this.showLoading(FlutterwaveConstants.VERIFYING);
     final response = await FlutterwaveAPIUtils.verifyPayment(
         chargeResponse.data.flwRef,
         http.Client(),
@@ -321,12 +320,12 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
 
     this.closeDialog();
 
-    if (response.status == FlutterwaveUtils.ERROR || response.data == null) {
+    if (response.status == FlutterwaveConstants.ERROR || response.data == null) {
       this.showSnackBar(response.message);
       this._onPaymentComplete(response);
       return;
     }
-    if (response.status == FlutterwaveUtils.SUCCESS &&
+    if (response.status == FlutterwaveConstants.SUCCESS &&
         response.data.amount == this.widget._paymentManager.amount &&
         response.data.txRef == this.widget._paymentManager.txRef) {
       this._onPaymentComplete(response);
@@ -373,7 +372,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
   }
 
   void _validatePayment(final String otp, final String flwRef) async {
-    this.showLoading(FlutterwaveUtils.VALIDATING_OTP);
+    this.showLoading(FlutterwaveConstants.VALIDATING_OTP);
     final client = http.Client();
     final response = await FlutterwaveAPIUtils.validatePayment(
         otp,
@@ -383,8 +382,8 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
         this.widget._paymentManager.publicKey,
         true);
     this.closeDialog();
-    if (response.status == FlutterwaveUtils.SUCCESS &&
-        response.message == FlutterwaveUtils.CHARGE_VALIDATED) {
+    if (response.status == FlutterwaveConstants.SUCCESS &&
+        response.message == FlutterwaveConstants.CHARGE_VALIDATED) {
       this._verifyPayment(response);
     } else {
       print("response in validating is => ${response.toJson()}");

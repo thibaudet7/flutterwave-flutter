@@ -7,9 +7,9 @@ import 'package:flutterwave/models/requests/charge_card/validate_charge_request.
 import 'package:flutterwave/models/responses/charge_card_response/charge_card_response_data.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
 import 'package:flutterwave/models/responses/get_bank/get_bank_response.dart';
-import 'package:flutterwave/utils/flutterwave_utils.dart';
-import 'package:mockito/mockito.dart';
+import 'package:flutterwave/utils/flutterwave_urls.dart';
 import 'package:http/http.dart' as http;
+import 'package:mockito/mockito.dart';
 
 class MockClient extends Mock implements http.Client {}
 
@@ -45,7 +45,7 @@ main() {
       when(mockResponse.statusCode).thenReturn(200);
       when(mockResponse.body).thenReturn(response);
 
-      when(client.get(FlutterwaveUtils.GET_BANKS_URL))
+      when(client.get(FlutterwaveURLS.GET_BANKS_URL))
           .thenAnswer((_) async => mockResponse);
 
       expect(200, mockResponse.statusCode);
@@ -66,7 +66,7 @@ main() {
       final flwRef = "some_ref";
       final otp = "123445";
       final String publicKey = "publicKey";
-      final url = FlutterwaveUtils.getBaseUrl(isDebugMode) + FlutterwaveUtils.VALIDATE_CHARGE;
+      final url = FlutterwaveURLS.getBaseUrl(isDebugMode) + FlutterwaveURLS.VALIDATE_CHARGE;
       final mockHeaders = {HttpHeaders.authorizationHeader: publicKey};
       final payload = ValidateChargeRequest(otp, flwRef, false).toJson();
 

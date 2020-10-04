@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/core/mpesa/mpesa_payment_manager.dart';
 import 'package:flutterwave/models/requests/mpesa/mpesa_request.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
+import 'package:flutterwave/utils/flutterwave_constants.dart';
 import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutterwave/core/mpesa/mpesa_payment_manager.dart';
-import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart' as http;
 
 class PayWithMpesa extends StatefulWidget {
   final MpesaPaymentManager _paymentManager;
@@ -161,7 +161,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
   void _handlePayment() async {
     Navigator.pop(this.context);
 
-    this.showLoading(FlutterwaveUtils.INITIATING_PAYMENT);
+    this.showLoading(FlutterwaveConstants.INITIATING_PAYMENT);
     final MpesaPaymentManager mpesaPaymentManager = this.widget._paymentManager;
 
     final MpesaRequest request = MpesaRequest(
@@ -176,8 +176,8 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
     try {
       final response = await mpesaPaymentManager.payWithMpesa(request, client);
       this.closeDialog();
-      if (FlutterwaveUtils.SUCCESS == response.status &&
-          FlutterwaveUtils.CHARGE_INITIATED == response.message) {
+      if (FlutterwaveConstants.SUCCESS == response.status &&
+          FlutterwaveConstants.CHARGE_INITIATED == response.message) {
         this._verifyPayment(response.data.flwRef);
       } else {
         this.showSnackBar(response.message);
@@ -197,7 +197,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
 
     ChargeResponse response;
 
-    this.showLoading(FlutterwaveUtils.VERIFYING);
+    this.showLoading(FlutterwaveConstants.VERIFYING);
     final client = http.Client();
     Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
       try {
@@ -211,8 +211,8 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
             this.widget._paymentManager.publicKey,
             this.widget._paymentManager.isDebugMode);
 
-        if ((response.data.status == FlutterwaveUtils.SUCCESS ||
-                response.data.status == FlutterwaveUtils.SUCCESSFUL) &&
+        if ((response.data.status == FlutterwaveConstants.SUCCESS ||
+                response.data.status == FlutterwaveConstants.SUCCESSFUL) &&
             response.data.amount ==
                 this.widget._paymentManager.amount.toString() &&
             response.data.flwRef == flwRef &&

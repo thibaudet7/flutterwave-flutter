@@ -8,6 +8,8 @@ import 'package:flutterwave/models/requests/authorization.dart';
 import 'package:flutterwave/models/requests/charge_card/charge_card_request.dart';
 import 'package:flutterwave/models/requests/charge_card/charge_request_address.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
+import 'package:flutterwave/utils/flutterwave_constants.dart';
+import 'package:flutterwave/utils/flutterwave_urls.dart';
 import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:http/http.dart' as http;
 
@@ -55,7 +57,7 @@ class CardPaymentManager {
 
   Map<String, String> _prepareRequest(
       final ChargeCardRequest chargeCardRequest) {
-    final String encryptedChargeRequest = FlutterwaveUtils.TripleDESEncrypt(
+    final String encryptedChargeRequest = FlutterwaveUtils.tripleDESEncrypt(
         jsonEncode(chargeCardRequest.toJson()), encryptionKey);
     return FlutterwaveUtils.encryptRequest(encryptedChargeRequest);
   }
@@ -72,8 +74,8 @@ class CardPaymentManager {
     final Map<String, String> encryptedPayload =
         this._prepareRequest(chargeCardRequest);
 
-    final url = FlutterwaveUtils.getBaseUrl(this.isDebugMode) +
-        FlutterwaveUtils.CHARGE_CARD_URL;
+    final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
+        FlutterwaveURLS.CHARGE_CARD_URL;
     final http.Response response = await client.post(url,
         headers: {HttpHeaders.authorizationHeader: this.publicKey},
         body: encryptedPayload);
@@ -87,15 +89,15 @@ class CardPaymentManager {
 
       if (response.statusCode == 200) {
         final bool requiresExtraAuth =
-            (responseBody.message == FlutterwaveUtils.REQUIRES_AUTH) &&
+            (responseBody.message == FlutterwaveConstants.REQUIRES_AUTH) &&
                 (responseBody.meta.authorization.mode != null);
 
         final bool is3DS = (responseBody.message ==
-                FlutterwaveUtils.CHARGE_INITIATED) &&
+            FlutterwaveConstants.CHARGE_INITIATED) &&
             (responseBody.meta.authorization.mode == Authorization.REDIRECT);
 
         final bool requiresOtp =
-            (responseBody.message == FlutterwaveUtils.CHARGE_INITIATED) &&
+            (responseBody.message == FlutterwaveConstants.CHARGE_INITIATED) &&
                 (responseBody.meta.authorization.mode == Authorization.OTP);
 
         if (requiresExtraAuth) {

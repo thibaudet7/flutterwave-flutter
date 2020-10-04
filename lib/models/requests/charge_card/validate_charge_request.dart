@@ -8,6 +8,11 @@ class ValidateChargeRequest {
   ValidateChargeRequest.fromJson(Map<String, dynamic> json) {
     this.otp = json["otp"];
     this.flwRef = json["flw_ref"];
+    if(json["type"] != null) {
+      this.isBankAccount = json["type"];
+    } else {
+      this.isBankAccount = false;
+    }
   }
 
   Map<String, dynamic> toJson() {

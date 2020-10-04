@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutterwave/core/flutterwave_error.dart';
 import 'package:flutterwave/models/requests/charge_card/validate_charge_request.dart';
 import 'package:flutterwave/models/requests/verify_charge_request.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
 import 'package:flutterwave/models/responses/get_bank/get_bank_response.dart';
 import 'package:flutterwave/models/responses/resolve_account/resolve_account_response.dart';
-import 'package:flutterwave/utils/flutterwave_utils.dart';
+import 'package:flutterwave/utils/flutterwave_urls.dart';
 import 'package:http/http.dart' as http;
 
 class FlutterwaveAPIUtils {
@@ -14,7 +15,7 @@ class FlutterwaveAPIUtils {
       final http.Client client) async {
     try {
       final response = await client.get(
-        FlutterwaveUtils.GET_BANKS_URL,
+        FlutterwaveURLS.GET_BANKS_URL,
       );
       if (response.statusCode == 200) {
         final List<dynamic> jsonDecoded = jsonDecode(response.body);
@@ -35,7 +36,7 @@ class FlutterwaveAPIUtils {
   static Future<ResolveAccountResponse> resolveAccount(
       final http.Client client) async {
     try {
-      final response = await client.get(FlutterwaveUtils.GET_BANKS_URL);
+      final response = await client.get(FlutterwaveURLS.GET_BANKS_URL);
       final ResolveAccountResponse resolveAccountResponse =
           jsonDecode(response.body);
       return resolveAccountResponse;
@@ -48,7 +49,7 @@ class FlutterwaveAPIUtils {
 
   static Future<ChargeResponse> validatePayment(
       String otp, String flwRef, http.Client client, final bool isDebugMode, final String publicKey, final isBankAccount) async {
-    final url = FlutterwaveUtils.getBaseUrl(isDebugMode) + FlutterwaveUtils.VALIDATE_CHARGE;
+    final url = FlutterwaveURLS.getBaseUrl(isDebugMode) + FlutterwaveURLS.VALIDATE_CHARGE;
     final ValidateChargeRequest chargeRequest =
     ValidateChargeRequest(otp, flwRef, isBankAccount);
     final payload = chargeRequest.toJson();
@@ -71,8 +72,8 @@ class FlutterwaveAPIUtils {
       final http.Client client,
       final String publicKey,
       final bool isDebugMode) async {
-    final url = FlutterwaveUtils.getBaseUrl(isDebugMode) +
-        FlutterwaveUtils.VERIFY_TRANSACTION;
+    final url = FlutterwaveURLS.getBaseUrl(isDebugMode) +
+        FlutterwaveURLS.VERIFY_TRANSACTION;
     final VerifyChargeRequest verifyRequest = VerifyChargeRequest(flwRef);
     final payload = verifyRequest.toJson();
     try {

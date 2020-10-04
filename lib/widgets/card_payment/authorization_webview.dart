@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutterwave/utils/flutterwave_utils.dart';
+import 'package:flutterwave/utils/flutterwave_urls.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class AuthorizationWebview extends StatefulWidget {
@@ -33,7 +33,7 @@ class _AuthorizationWebviewState extends State<AuthorizationWebview> {
   void _pageStarted(String url) {
     final bool startsWithMyRedirectUrl = url
             .toString()
-            .indexOf(FlutterwaveUtils.DEFAULT_REDIRECT_URL.toString()) ==
+            .indexOf(FlutterwaveURLS.DEFAULT_REDIRECT_URL.toString()) ==
         0;
     if (url != this.widget._url && startsWithMyRedirectUrl) {
       this._onValidationSuccessful(url);

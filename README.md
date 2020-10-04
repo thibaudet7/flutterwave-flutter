@@ -7,8 +7,6 @@ Flutterwave's Flutter SDK is Flutterwave's offical flutter sdk to integrate the 
   
 The payment methods currently supported are Cards, USSD, Mpesa, GH Mobile Money, UG Mobile Money, ZM Mobile Money, Rwanda Mobile Money, Franc Mobile Money and Nigeria Bank Account.
 
-  
-<img  alt="Screenshot of Drop-In"  src="https://i.imgur.com/UZZkC6e.png"  width="900"/>
 
   
 
@@ -50,7 +48,7 @@ Create a `Flutterwave` instance by calling the constructor `Flutterwave.UiPaymen
 	            publicKey: "public_key_here",
 	            encryptionKey: "encryption_key_here",  
 	            isDebugMode: this.isDebug,
-	            currency: FlutterwaveUtils.NGN,
+	            currency: FlutterwaveCurrency.NGN,
 	            amount: "10",
 	            email: "test_user@test.com",
 	            fullName: "Flutterwave Test User",
@@ -60,13 +58,7 @@ Create a `Flutterwave` instance by calling the constructor `Flutterwave.UiPaymen
 	            acceptBankTransferPayment: true,  
 	            acceptAccountPayment = true,
 	            acceptCardPayment = true,  
-	            acceptUSSDPayment = true,  
-	            acceptRwandaMoneyPayment = false,  
-	            acceptMpesaPayment = false,  
-	            acceptZambiaPayment = false,  
-	            acceptGhanaPayment = false,  
-	            acceptUgandaPayment = false,  
-	            acceptFrancophoneMobileMoney = false)
+	            acceptUSSDPayment = true)
 	            .initializeForUiPayments();
 	         } catch(error) {
 		         print(error.toString());

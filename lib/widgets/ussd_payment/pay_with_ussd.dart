@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
-import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutterwave/core/ussd_payment_manager/ussd_manager.dart';
 import 'package:flutterwave/models/bank_with_ussd.dart';
 import 'package:flutterwave/models/requests/ussd/ussd_request.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
-import 'package:flutterwave/utils/flutterwave_utils.dart';
+import 'package:flutterwave/utils/flutterwave_constants.dart';
+import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
 import 'package:flutterwave/widgets/ussd_payment/pay_with_ussd_button.dart';
 import 'package:flutterwave/widgets/ussd_payment/ussd_details.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart' as http;
 
 class PayWithUssd extends StatefulWidget {
   final USSDPaymentManager _paymentManager;
@@ -147,7 +147,7 @@ class _PayWithUssdState extends State<PayWithUssd> {
   void _payWithUSSD() async {
     Navigator.pop(this.context);
 
-    this.showLoading(FlutterwaveUtils.INITIATING_PAYMENT);
+    this.showLoading(FlutterwaveConstants.INITIATING_PAYMENT);
     final USSDPaymentManager ussdPaymentManager = this.widget._paymentManager;
     final request = USSDRequest(
         amount: ussdPaymentManager.amount,
@@ -163,7 +163,7 @@ class _PayWithUssdState extends State<PayWithUssd> {
           .widget
           ._paymentManager
           .payWithUSSD(request, http.Client());
-      if (FlutterwaveUtils.SUCCESS == response.status) {
+      if (FlutterwaveConstants.SUCCESS == response.status) {
         this._afterChargeInitiated(response);
       } else {
         this.showSnackBar(response.message);
@@ -183,7 +183,7 @@ class _PayWithUssdState extends State<PayWithUssd> {
     int intialCount = 0;
 
     if (this._chargeResponse != null) {
-      this.showLoading(FlutterwaveUtils.VERIFYING);
+      this.showLoading(FlutterwaveConstants.VERIFYING);
       final client = http.Client();
       ChargeResponse response;
       Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
@@ -199,7 +199,7 @@ class _PayWithUssdState extends State<PayWithUssd> {
               this.widget._paymentManager.publicKey,
               this.widget._paymentManager.isDebugMode);
 
-          if (response.data.status == FlutterwaveUtils.SUCCESSFUL &&
+          if (response.data.status == FlutterwaveConstants.SUCCESSFUL &&
               this._chargeResponse.data.flwRef == response.data.flwRef &&
               response.data.amount ==
                   this._chargeResponse.data.amount.toString()) {

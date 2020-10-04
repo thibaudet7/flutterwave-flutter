@@ -2,16 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/core/mobile_money/mobile_money_payment_manager.dart';
 import 'package:flutterwave/models/francophone_country.dart';
 import 'package:flutterwave/models/requests/authorization.dart';
+import 'package:flutterwave/models/requests/mobile_money/mobile_money_request.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
+import 'package:flutterwave/utils/flutterwave_constants.dart';
+import 'package:flutterwave/utils/flutterwave_currency.dart';
+import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:flutterwave/widgets/card_payment/authorization_webview.dart';
 import 'package:flutterwave/widgets/flutterwave_view_utils.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutterwave/core/mobile_money/mobile_money_payment_manager.dart';
-import 'package:flutterwave/models/requests/mobile_money/mobile_money_request.dart';
-import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart' as http;
 
 class PayWithMobileMoney extends StatefulWidget {
   final MobileMoneyPaymentManager _paymentManager;
@@ -95,8 +97,8 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
                     ),
                   ),
                   Visibility(
-                    visible: currency.toUpperCase() == FlutterwaveUtils.XAF ||
-                        currency.toUpperCase() == FlutterwaveUtils.XOF,
+                    visible: currency.toUpperCase() == FlutterwaveCurrency.XAF ||
+                        currency.toUpperCase() == FlutterwaveCurrency.XOF,
                     child: Container(
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                       width: double.infinity,
@@ -114,7 +116,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
                     ),
                   ),
                   Visibility(
-                    visible: currency.toUpperCase() == FlutterwaveUtils.GHS,
+                    visible: currency.toUpperCase() == FlutterwaveCurrency.GHS,
                     child: Container(
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                       width: double.infinity,
@@ -210,7 +212,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
   }
 
   Widget _getNetworksThatAllowMobileMoney() {
-    final networks = FlutterwaveUtils.getAllowedMobileMoneyNetworksByCurrency(
+    final networks = FlutterwaveCurrency.getAllowedMobileMoneyNetworksByCurrency(
         this.widget._paymentManager.currency);
     return Container(
       height: 220,
@@ -290,17 +292,17 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
 
   String _getPageTitle(final String currency) {
     switch (currency.toUpperCase()) {
-      case FlutterwaveUtils.GHS:
+      case FlutterwaveCurrency.GHS:
         return "Ghana Mobile Money";
-      case FlutterwaveUtils.RWF:
+      case FlutterwaveCurrency.RWF:
         return "Rwanda Mobile Money";
-      case FlutterwaveUtils.ZMW:
+      case FlutterwaveCurrency.ZMW:
         return "Zambia Mobile Money";
-      case FlutterwaveUtils.UGX:
+      case FlutterwaveCurrency.UGX:
         return "Uganda Mobile Money";
-      case FlutterwaveUtils.XAF:
+      case FlutterwaveCurrency.XAF:
         return "Francophone Mobile Money";
-      case FlutterwaveUtils.XOF:
+      case FlutterwaveCurrency.XOF:
         return "Francophone Mobile Money";
     }
     return "";
@@ -319,7 +321,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
   void _handlePayment() async {
     Navigator.pop(this.context);
 
-    this.showLoading(FlutterwaveUtils.INITIATING_PAYMENT);
+    this.showLoading(FlutterwaveConstants.INITIATING_PAYMENT);
 
     final MobileMoneyPaymentManager mobileMoneyPaymentManager =
         this.widget._paymentManager;
@@ -348,8 +350,8 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
           await mobileMoneyPaymentManager.payWithMobileMoney(request, client);
       this.closeDialog();
 
-      if (FlutterwaveUtils.SUCCESS == response.status &&
-          FlutterwaveUtils.CHARGE_INITIATED == response.message) {
+      if (FlutterwaveConstants.SUCCESS == response.status &&
+          FlutterwaveConstants.CHARGE_INITIATED == response.message) {
         if (response.meta.authorization.mode == Authorization.REDIRECT &&
             response.meta.authorization.redirect != null) {
           this.openOtpScreen(response.meta.authorization.redirect);
@@ -395,7 +397,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
 
     ChargeResponse response;
 
-    this.showLoading(FlutterwaveUtils.VERIFYING);
+    this.showLoading(FlutterwaveConstants.VERIFYING);
 
     Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
       if (intialCount >= numberOfTries && response != null) {
@@ -409,8 +411,8 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
             client,
             this.widget._paymentManager.publicKey,
             this.widget._paymentManager.isDebugMode);
-        if ((response.data.status == FlutterwaveUtils.SUCCESSFUL ||
-                response.data.status == FlutterwaveUtils.SUCCESS) &&
+        if ((response.data.status == FlutterwaveConstants.SUCCESSFUL ||
+                response.data.status == FlutterwaveConstants.SUCCESS) &&
             response.data.amount == this.widget._paymentManager.amount &&
             response.data.flwRef == flwRef) {
           timer.cancel();
