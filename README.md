@@ -75,11 +75,9 @@ Create a `Flutterwave` instance by calling the constructor `Flutterwave.UiPaymen
  - To accept payment of different kinds, you need set the currency to the correspending payment type i.e, `KES` for `Mpesa`, `RWF` for `Rwanda Mobile Money`, `NGN` for `USSD`,
 `Bank Accounts Payment` and so on.
 
-
 >  **PLEASE NOTE**
 
 > We advise you to do a further verification of transaction's details on your server to be sure everything checks out before providing service or goods.
- 
 
 ## Help
 
