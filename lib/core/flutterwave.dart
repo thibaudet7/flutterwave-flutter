@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
 import 'package:flutterwave/utils/flutterwave_currency.dart';
-import 'package:flutterwave/utils/flutterwave_utils.dart';
 import 'package:flutterwave/widgets/home/flutterwave_payment.dart';
 
 import 'flutterwave_payment_manager.dart';
