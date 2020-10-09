@@ -51,9 +51,9 @@ In your `pubspec.yaml` file add:
 
 ### 1. Create a `Flutterwave` instance
 
-Create a `Flutterwave` instance by calling the constructor `Flutterwave.UiPayment()` The `UiPayment` accepts a mandatory instance of the calling `Context` , `publicKey`, `encryptionKey`, `amount`, `currency`, `email`, `fullName`, `txRef`, `isDebugMode` and `phoneNumber` . It returns an instance of `Flutterwave`  which we then call the `async` method `.initializeForUiPayments()` on.
+Create a `Flutterwave` instance by calling the constructor `Flutterwave.UiPayment()` The constructor accepts a mandatory instance of the calling `Context` , `publicKey`, `encryptionKey`, `amount`, `currency`, `email`, `fullName`, `txRef`, `isDebugMode` and `phoneNumber` . It returns an instance of `Flutterwave`  which we then call the `async` method `.initializeForUiPayments()` on.
 
-    void beginPayment async () { 
+     beginPayment async () { 
        try { 
 		     Flutterwave flutterwave = Flutterwave.UiPayment(
                          context: this.context,
@@ -172,7 +172,7 @@ Create a `Flutterwave` instance by calling the constructor `Flutterwave.UiPaymen
 
 >  **PLEASE NOTE**
 
-> We advise you to do a further verification of transaction's details on your server to be sure everything checks out before providing service or goods as seen in the `checkPaymentIsSuccessful()` methos above.
+> We advise you to do a further verification of transaction's details on your server to be sure everything checks out before providing service or goods as seen in the `checkPaymentIsSuccessful()` method above.
 
 <a id="deployment"></a>
 ## Deployment
