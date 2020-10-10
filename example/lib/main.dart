@@ -175,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _handlePaymentInitialization() async {
-    final flutterwave = Flutterwave.UiPayment(
+    final flutterwave = Flutterwave.forUIPayment(
       amount: this.amountController.text.toString().trim(),
       currency: this.currencyController.text,
       context: this.context,
