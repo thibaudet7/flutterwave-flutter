@@ -47,7 +47,7 @@ class _PayWithUssdState extends State<PayWithUssd> {
       home: Scaffold(
         key: this._scaffoldKey,
         appBar: AppBar(
-          backgroundColor: Hexcolor("#fff1d0"),
+          backgroundColor: HexColor("#fff1d0"),
           title: RichText(
             textAlign: TextAlign.left,
             text: TextSpan(
