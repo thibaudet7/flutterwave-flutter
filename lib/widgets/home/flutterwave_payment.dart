@@ -142,25 +142,6 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                         ],
                       ),
                     ),
-                    //todo enable when v3 is confirmed to work well
-                    // Visibility(
-                    //   visible: paymentManager.acceptBankTransferPayment,
-                    //   child: Column(
-                    //     children: [
-                    //       SizedBox(
-                    //         height: 50.0,
-                    //         child: FlutterwavePaymentOption(
-                    //           handleClick:
-                    //               this._launchBankTransferPaymentWidget,
-                    //           buttonText: "Bank Transfer",
-                    //         ),
-                    //       ),
-                    //       SizedBox(
-                    //         height: 0.5,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                     Visibility(
                       visible: paymentManager.acceptUSSDPayment,
                       child: Column(
@@ -412,7 +393,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
   //   Navigator.pop(this.context, response);
   // }
 
-  // Todo include when Bank Transfer Payment is ready.
+  // Todo include when Bank Transfer Payment is optimized.
   // void _launchBankTransferPaymentWidget() async {
   //   final BankTransferPaymentManager bankTransferPaymentManager =
   //       this.widget._flutterwavePaymentManager.getBankTransferPaymentManager();
