@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/core/metrics/metric_manager.dart';
 import 'package:flutterwave/core/pay_with_account_manager/bank_account_manager.dart';
 import 'package:flutterwave/models/requests/authorization.dart';
 import 'package:flutterwave/models/requests/pay_with_bank_account/pay_with_bank_account.dart';
@@ -33,7 +34,6 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
   final TextEditingController _accountNumberController =
       TextEditingController();
   final TextEditingController _bankController = TextEditingController();
-
 
   BuildContext _loadingDialogContext;
 
@@ -234,7 +234,8 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
   }
 
   void _handleResponse(final ChargeResponse response) {
-    if (response.data == null || response.status == FlutterwaveConstants.ERROR) {
+    if (response.data == null ||
+        response.status == FlutterwaveConstants.ERROR) {
       this._showSnackBar(response.message);
       return;
     }
@@ -311,11 +312,13 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
         chargeResponse.data.flwRef,
         http.Client(),
         this.widget._paymentManager.publicKey,
-        this.widget._paymentManager.isDebugMode);
+        this.widget._paymentManager.isDebugMode,
+        MetricManager.ACCOUNT_CHARGE_VERIFY);
 
     this._closeDialog();
 
-    if (response.status == FlutterwaveConstants.ERROR || response.data == null) {
+    if (response.status == FlutterwaveConstants.ERROR ||
+        response.data == null) {
       this._showSnackBar(response.message);
       this._onPaymentComplete(response);
       return;
@@ -375,7 +378,8 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
         client,
         this.widget._paymentManager.isDebugMode,
         this.widget._paymentManager.publicKey,
-        true);
+        true,
+        MetricManager.ACCOUNT_CHARGE_VALIDATE);
     this._closeDialog();
     if (response.status == FlutterwaveConstants.SUCCESS &&
         response.message == FlutterwaveConstants.CHARGE_VALIDATED) {

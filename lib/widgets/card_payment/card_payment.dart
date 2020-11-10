@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/card_payment_manager/card_payment_manager.dart';
 import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/core/metrics/metric_manager.dart';
 import 'package:flutterwave/interfaces/card_payment_listener.dart';
 import 'package:flutterwave/models/requests/charge_card/charge_card_request.dart';
 import 'package:flutterwave/models/requests/charge_card/charge_request_address.dart';
@@ -237,7 +238,8 @@ class _CardPaymentState extends State<CardPayment>
           flwRef,
           http.Client(),
           this.widget._paymentManager.publicKey,
-          this.widget._paymentManager.isDebugMode);
+          this.widget._paymentManager.isDebugMode,
+          MetricManager.VERIFY_CARD_CHARGE);
       this._closeDialog();
       if (response.data.status == FlutterwaveConstants.SUCCESSFUL) {
         this.onComplete(response);
@@ -295,7 +297,8 @@ class _CardPaymentState extends State<CardPayment>
         chargeResponse.data.flwRef,
         http.Client(),
         this.widget._paymentManager.publicKey,
-        this.widget._paymentManager.isDebugMode);
+        this.widget._paymentManager.isDebugMode,
+        MetricManager.VERIFY_CARD_CHARGE);
     this._closeDialog();
 
     if (verifyResponse.status == FlutterwaveConstants.SUCCESS &&
