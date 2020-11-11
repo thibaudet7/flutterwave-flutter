@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class MetricManager {
@@ -22,17 +24,14 @@ class MetricManager {
       String responseTime ) async {
     final request = {
     "publicKey": publicKey,
-    "language": "Flutter/Dart Rave v3",
-    "version": "SDK 0.0.3",
+    "language": "Flutter Rave v3",
+    "version": "Flutter SDK 0.0.3",
     "title": featureName,
     "message": responseTime
     };
     try {
-      final response = await client.post(_METRIC_URL, body: request);
-      print("Metric success is ${response.body}");
-    } catch (ignored) {
-      print("Metric error is $ignored");
-    }
+      client.post(_METRIC_URL, body: jsonEncode(request));
+    } catch (ignored) { }
   }
   
 

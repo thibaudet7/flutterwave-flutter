@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/core/metrics/metric_manager.dart';
@@ -307,30 +309,67 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
   }
 
   void _verifyPayment(ChargeResponse chargeResponse) async {
+    final timeoutInMinutes = 4;
+    final timeOutInSeconds = timeoutInMinutes * 60;
+    final requestIntervalInSeconds = 7;
+    final numberOfTries = timeOutInSeconds / requestIntervalInSeconds;
+    int intialCount = 0;
+
+    ChargeResponse response;
     this._showLoading(FlutterwaveConstants.VERIFYING);
-    final response = await FlutterwaveAPIUtils.verifyPayment(
-        chargeResponse.data.flwRef,
-        http.Client(),
-        this.widget._paymentManager.publicKey,
-        this.widget._paymentManager.isDebugMode,
-        MetricManager.ACCOUNT_CHARGE_VERIFY);
 
-    this._closeDialog();
+    Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
+      if (intialCount >= numberOfTries && response != null) {
+        timer.cancel();
+        return this._onPaymentComplete(response);
+      }
+      final client = http.Client();
+      try {
+        response = await FlutterwaveAPIUtils.verifyPayment(
+            chargeResponse.data.flwRef,
+            client,
+            this.widget._paymentManager.publicKey,
+            this.widget._paymentManager.isDebugMode,
+            MetricManager.ACCOUNT_CHARGE_VERIFY);
+        if ((response.data.status == FlutterwaveConstants.SUCCESSFUL ||
+                response.data.status == FlutterwaveConstants.SUCCESS) &&
+            response.data.amount == this.widget._paymentManager.amount &&
+            response.data.flwRef == chargeResponse.data.flwRef) {
+          timer.cancel();
+          this._onPaymentComplete(response);
+        }
+      } catch (error) {
+        timer.cancel();
+        this._closeDialog();
+        this._showSnackBar(error.toString());
+      } finally {
+        intialCount = intialCount + 1;
+      }
+    });
 
-    if (response.status == FlutterwaveConstants.ERROR ||
-        response.data == null) {
-      this._showSnackBar(response.message);
-      this._onPaymentComplete(response);
-      return;
-    }
-    if (response.status == FlutterwaveConstants.SUCCESS &&
-        response.data.amount == this.widget._paymentManager.amount &&
-        response.data.txRef == this.widget._paymentManager.txRef) {
-      this._onPaymentComplete(response);
-      return;
-    }
-    this._onPaymentComplete(response);
-    this._showSnackBar(response.message);
+    // response = await FlutterwaveAPIUtils.verifyPayment(
+    //     chargeResponse.data.flwRef,
+    //     http.Client(),
+    //     this.widget._paymentManager.publicKey,
+    //     this.widget._paymentManager.isDebugMode,
+    //     MetricManager.ACCOUNT_CHARGE_VERIFY);
+    //
+    // this._closeDialog();
+    //
+    // if (response.status == FlutterwaveConstants.ERROR ||
+    //     response.data == null) {
+    //   this._showSnackBar(response.message);
+    //   this._onPaymentComplete(response);
+    //   return;
+    // }
+    // if (response.status == FlutterwaveConstants.SUCCESS &&
+    //     response.data.amount == this.widget._paymentManager.amount &&
+    //     response.data.txRef == this.widget._paymentManager.txRef) {
+    //   this._onPaymentComplete(response);
+    //   return;
+    // }
+    // this._onPaymentComplete(response);
+    // this._showSnackBar(response.message);
     return;
   }
 
@@ -456,7 +495,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
   }
 
   void _onPaymentComplete(final ChargeResponse chargeResponse) {
-    this._showSnackBar("Transaction complete!");
+    this._closeDialog();
     Navigator.pop(this.context, chargeResponse);
   }
 
