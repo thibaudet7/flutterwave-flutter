@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutterwave/utils/flutterwave_urls.dart';
@@ -14,6 +15,13 @@ class AuthorizationWebview extends StatefulWidget {
 }
 
 class _AuthorizationWebviewState extends State<AuthorizationWebview> {
+
+  @override
+  void initState() {
+    super.initState();
+    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

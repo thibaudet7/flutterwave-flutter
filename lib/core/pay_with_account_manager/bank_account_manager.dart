@@ -51,10 +51,12 @@ class BankAccountPaymentManager {
       final http.Response response = await client.post(url,
           headers: {HttpHeaders.authorizationHeader: this.publicKey},
           body: requestBody);
+
     MetricManager.logMetric(client,
         publicKey,
         MetricManager.INITIATE_ACCOUNT_CHARGE,
         "${stopWatch.elapsedMilliseconds}ms");
+
       ChargeResponse bankTransferResponse =
       ChargeResponse.fromJson(json.decode(response.body));
       return bankTransferResponse;
