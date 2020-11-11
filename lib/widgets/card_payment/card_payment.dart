@@ -313,7 +313,11 @@ class _CardPaymentState extends State<CardPayment>
 
   @override
   void onError(String error) {
-    this._closeDialog();
+    if (this.loadingDialogContext == null) {
+      Navigator.pop(context);
+    } else {
+      this._closeDialog();
+    }
     this._showSnackBar(error);
   }
 

@@ -70,17 +70,24 @@ class CardPaymentManager {
   }
 
   /// Initiates Card Request
-  Future<dynamic> payWithCard(final http.Client client,
+  Future<dynamic> payWithCard(
+      final http.Client client,
       final ChargeCardRequest chargeCardRequest) async {
 
+    Map<String, String> encryptedPayload;
     this.chargeCardRequest = chargeCardRequest;
+
     if (this.cardPaymentListener == null) {
       this.cardPaymentListener.onError("No CardPaymentListener Attached!");
       return;
     }
 
-    final Map<String, String> encryptedPayload =
-        this._prepareRequest(chargeCardRequest);
+     try {
+        encryptedPayload = this._prepareRequest(chargeCardRequest);
+     } catch(error){
+       this.cardPaymentListener.onError("Unable to initiate card transaction. Please try again");
+       return;
+     }
 
     final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
         FlutterwaveURLS.CHARGE_CARD_URL;
