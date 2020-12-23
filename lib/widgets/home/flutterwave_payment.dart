@@ -35,6 +35,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
 
     return MaterialApp(
       debugShowCheckedModeBanner: paymentManager.isDebugMode,
+      theme: ThemeData(fontFamily: "FLW"),
       home: Scaffold(
         key: this._scaffoldKey,
         body: SingleChildScrollView(
@@ -67,6 +68,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 10.0,
+                                  fontFamily: "FLW",
                                   letterSpacing: 1.0),
                             )
                           ],
@@ -84,6 +86,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
+                              fontFamily: "FLW",
                               fontSize: 30.0,
                             ),
                           ),

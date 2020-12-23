@@ -13,7 +13,7 @@ dependencies:
 
   http: ^0.12.2
   tripledes: ^2.1.0
-  webview_flutter: ^1.0.1
+  webview_flutter: 1.0.7
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +21,15 @@ dev_dependencies:
 
   mockito: 4.1.0
 flutter:
+  uses-material-design: true
+  fonts:
+    - family: FLW
+      fonts:
+        - asset: fonts/FLW-Regular.ttf
+        - asset: fonts/FLW-Bold.ttf
+#  fonts:
+#    - family: FLW
+#      fonts:
+#        - asset: fonts/FLW-Regular.ttf
+#        - asset: fonts/FLW-Italic.ttf
+#        - asset: fonts/FLW-Bold

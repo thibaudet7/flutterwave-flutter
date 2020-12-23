@@ -314,6 +314,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
     final requestIntervalInSeconds = 7;
     final numberOfTries = timeOutInSeconds / requestIntervalInSeconds;
     int intialCount = 0;
+    final String transactionID = chargeResponse.data.id;
 
     ChargeResponse response;
     this._showLoading(FlutterwaveConstants.VERIFYING);

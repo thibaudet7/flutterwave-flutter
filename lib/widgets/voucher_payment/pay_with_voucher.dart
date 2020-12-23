@@ -142,10 +142,6 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
     }
   }
 
-  void _removeFocusFromView() {
-    FocusScope.of(this.context).requestFocus(FocusNode());
-  }
-
   void _showSnackBar(String message) {
     SnackBar snackBar = SnackBar(
       content: Text(
@@ -185,7 +181,7 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
       
       if (FlutterwaveConstants.SUCCESS == response.status &&
           FlutterwaveConstants.CHARGE_INITIATED == response.message) {
-        this._verifyPayment(response.data.flwRef);
+        this._verifyPayment(response);
       } else {
         this._showSnackBar(response.message);
       }
@@ -194,7 +190,7 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
     }
   }
 
-  void _verifyPayment(final String flwRef) async {
+  void _verifyPayment(final ChargeResponse chargeResponse) async {
     final timeoutInMinutes = 2;
     final timeOutInSeconds = timeoutInMinutes * 60;
     final requestIntervalInSeconds = 7;
@@ -209,19 +205,20 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
       final client = http.Client();
       try {
         final response = await FlutterwaveAPIUtils.verifyPayment(
-            flwRef,
+            chargeResponse.data.flwRef,
             client,
             this.widget._paymentManager.publicKey,
             this.widget._paymentManager.isDebugMode);
+        this._closeDialog();
         if ((response.data.status == FlutterwaveConstants.SUCCESSFUL ||
             response.data.status == FlutterwaveConstants.SUCCESS) &&
             response.data.amount == this.widget._paymentManager.amount &&
-            response.data.flwRef == flwRef) {
+            response.data.flwRef == chargeResponse.data.flwRef) {
           timer.cancel();
+          this._onComplete(response);
         } else {
           this._showSnackBar(response.message);
         }
-        this._onComplete(response);
       } catch (error) {
         timer.cancel();
         this._closeDialog();

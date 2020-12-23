@@ -178,7 +178,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
       this._closeDialog();
       if (FlutterwaveConstants.SUCCESS == response.status &&
           FlutterwaveConstants.CHARGE_INITIATED == response.message) {
-        this._verifyPayment(response.data.flwRef);
+        this._verifyPayment(response);
       } else {
         this._showSnackBar(response.message);
       }
@@ -188,7 +188,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
     }
   }
 
-  void _verifyPayment(final String flwRef) async {
+  void _verifyPayment(final ChargeResponse chargeResponse) async {
     final timeoutInMinutes = 3;
     final timeOutInSeconds = timeoutInMinutes * 60;
     final requestIntervalInSeconds = 7;
@@ -206,7 +206,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
           return this._onComplete(response);
         }
         response = await FlutterwaveAPIUtils.verifyPayment(
-            flwRef,
+            chargeResponse.data.flwRef,
             client,
             this.widget._paymentManager.publicKey,
             this.widget._paymentManager.isDebugMode);
@@ -215,7 +215,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
                 response.data.status == FlutterwaveConstants.SUCCESSFUL) &&
             response.data.amount ==
                 this.widget._paymentManager.amount.toString() &&
-            response.data.flwRef == flwRef &&
+            response.data.flwRef == chargeResponse.data.flwRef &&
             response.data.currency == this.widget._paymentManager.currency) {
           timer.cancel();
           this._onComplete(response);
