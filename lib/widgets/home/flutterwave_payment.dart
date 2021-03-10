@@ -310,18 +310,11 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
     final CardPaymentManager cardPaymentManager =
         this.widget._flutterwavePaymentManager.getCardPaymentManager();
 
-    final ChargeResponse chargeResponse = await Navigator.push(
+    final dynamic response = await Navigator.push(
       this.context,
       MaterialPageRoute(builder: (context) => CardPayment(cardPaymentManager)),
     );
-    String message;
-    if (chargeResponse != null) {
-      message = chargeResponse.message;
-    } else {
-      message = "Transaction cancelled";
-    }
-    this.showSnackBar(message);
-    Navigator.pop(this.context, chargeResponse);
+    _handleBackPress(response);
   }
 
   void _launchPayWithAccountWidget() async {
@@ -332,7 +325,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
       MaterialPageRoute(
           builder: (context) => PayWithBankAccount(bankAccountPaymentManager)),
     );
-    Navigator.pop(this.context, response);
+    _handleBackPress(response);
   }
 
   void _launchUSSDPaymentWidget() async {
@@ -342,7 +335,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
       this.context,
       MaterialPageRoute(builder: (context) => PayWithUssd(paymentManager)),
     );
-    Navigator.pop(this.context, response);
+    _handleBackPress(response);
   }
 
   void _launchMobileMoneyPaymentWidget() async {
@@ -353,7 +346,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
       MaterialPageRoute(
           builder: (context) => PayWithMobileMoney(mobileMoneyPaymentManager)),
     );
-    Navigator.pop(this.context, response);
+    _handleBackPress(response);
   }
 
   void _launchMpesaPaymentWidget() async {
@@ -366,7 +359,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
       MaterialPageRoute(
           builder: (context) => PayWithMpesa(mpesaPaymentManager)),
     );
-    Navigator.pop(this.context, response);
+    _handleBackPress(response);
   }
 
   void _launchVoucherPaymentWidget() async {
@@ -377,7 +370,7 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
       MaterialPageRoute(
           builder: (context) => PayWithVoucher(voucherPaymentManager)),
     );
-    Navigator.pop(this.context, response);
+    _handleBackPress(response);
   }
 
   void showSnackBar(String message) {
@@ -388,5 +381,21 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
       ),
     );
     this._scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  void _handleBackPress(dynamic result) {
+    if (result == null || result is ChargeResponse){
+      final ChargeResponse chargeResponse = result as ChargeResponse;
+      String message;
+      if (chargeResponse != null) {
+        message = chargeResponse.message;
+      } else {
+        message = "Transaction cancelled";
+      }
+      this.showSnackBar(message);
+      Navigator.pop(this.context, chargeResponse);
+    } else {
+      // checking if back arrow was pressed so we do nothing.
+    }
   }
 }

@@ -339,8 +339,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
           FlutterwaveConstants.CHARGE_INITIATED == response.message) {
         if (response.meta.authorization.mode == Authorization.REDIRECT &&
             response.meta.authorization.redirect != null) {
-          this._openOtpScreen(
-              response.meta.authorization.redirect, response.data.id);
+          this._openOtpScreen(response.meta.authorization.redirect);
           return;
         }
         if (response.meta.authorization.mode == Authorization.CALLBACK) {
@@ -357,7 +356,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
     }
   }
 
-  Future<dynamic> _openOtpScreen(String url, String id) async {
+  Future<dynamic> _openOtpScreen(String url) async {
     final result = await Navigator.push(
       this.context,
       MaterialPageRoute(
@@ -404,6 +403,11 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
             response.data.flwRef == flwRef) {
           timer.cancel();
           this._onComplete(response);
+        } else {
+          if (!timer.isActive) {
+            this._closeDialog();
+            this._showSnackBar(response.message);
+          }
         }
       } catch (error) {
         timer.cancel();

@@ -20,19 +20,17 @@ class MobileMoneyPaymentManager {
   String redirectUrl;
 
   /// MobileMoneyPaymentManager constructor
-  MobileMoneyPaymentManager({
-    @required this.publicKey,
-    @required this.currency,
-    @required this.amount,
-    @required this.txRef,
-    @required this.isDebugMode,
-    @required this.phoneNumber,
-    @required this.fullName,
-    @required this.email,
-    this.network,
-    this.redirectUrl
-  });
-
+  MobileMoneyPaymentManager(
+      {@required this.publicKey,
+      @required this.currency,
+      @required this.amount,
+      @required this.txRef,
+      @required this.isDebugMode,
+      @required this.phoneNumber,
+      @required this.fullName,
+      @required this.email,
+      this.network,
+      this.redirectUrl});
 
   /// Initiates payments via Mobile Money
   /// returns an instance of ChargeResponse or throws an error
@@ -47,8 +45,10 @@ class MobileMoneyPaymentManager {
             HttpHeaders.authorizationHeader: this.publicKey,
             HttpHeaders.contentTypeHeader: "application/json"
           },
-          body: requestBody);
-      ChargeResponse chargeResponse = ChargeResponse.fromJson(json.decode(response.body));
+          body: jsonEncode(requestBody));
+      ChargeResponse chargeResponse =
+          ChargeResponse.fromJson(json.decode(response.body));
+
       return chargeResponse;
     } catch (error) {
       throw (FlutterError(error.toString()));

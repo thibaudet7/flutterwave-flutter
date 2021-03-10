@@ -47,7 +47,7 @@ class FlutterwaveViewUtils {
   }
 
   static void _goBackToPaymentScreen(final BuildContext context) {
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(true);
   }
 
   static Widget appBar(final BuildContext context, final String title) {

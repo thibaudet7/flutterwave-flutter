@@ -60,12 +60,13 @@ class MpesaPaymentManager {
     final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
         FlutterwaveURLS.PAY_WITH_MPESA;
     try {
+
       final http.Response response = await client.post(url,
           headers: {
             HttpHeaders.authorizationHeader: this.publicKey,
-            HttpHeaders.contentTypeHeader: "application/json"
+            HttpHeaders.contentTypeHeader:'application/json'
           },
-          body: payload.toJson());
+          body: json.encode(payload.toJson()));
 
       ChargeResponse chargeResponse =
           ChargeResponse.fromJson(json.decode(response.body));

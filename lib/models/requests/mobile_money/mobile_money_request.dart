@@ -30,7 +30,7 @@ class MobileMoneyRequest {
     return {
       'amount': this.amount,
       'currency': this.currency,
-      'network': this.network == null ? " " : this.network,
+      'network': this.network == null ? "" : this.network,
       'tx_ref': this.txRef,
       'fullname': this.fullName,
       'email': this.email,

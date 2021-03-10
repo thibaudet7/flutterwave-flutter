@@ -120,7 +120,8 @@ class _PayWithUssdState extends State<PayWithUssd> {
   void _initiateUSSDPayment() async {
     if (this.selectedBank != null) {
       final USSDPaymentManager pm = this.widget._paymentManager;
-     FlutterwaveViewUtils.showConfirmPaymentModal(this.context, pm.currency, pm.amount, this._payWithUSSD);
+     FlutterwaveViewUtils.showConfirmPaymentModal(this.context,
+         pm.currency, pm.amount, this._payWithUSSD);
     } else {
       this._showSnackBar("Please select a bank");
     }
@@ -189,7 +190,7 @@ class _PayWithUssdState extends State<PayWithUssd> {
             this._closeDialog();
             this._onComplete(response);
           } else {
-            this._showSnackBar(response.message);
+            if (!timer.isActive) this._showSnackBar(response.message);
           }
         } catch (error) {
           timer.cancel();

@@ -79,30 +79,29 @@ class CardPaymentManager {
       this.cardPaymentListener.onError("No CardPaymentListener Attached!");
       return;
     }
-
+    _stopwatch.start();
     try {
       encryptedPayload = this._prepareRequest(chargeCardRequest);
+
+      final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
+          FlutterwaveURLS.CHARGE_CARD_URL;
+
+      final http.Response response = await client.post(url,
+          headers: {
+            HttpHeaders.authorizationHeader: this.publicKey,
+            HttpHeaders.contentTypeHeader: "application/json"
+          },
+          body: jsonEncode(encryptedPayload));
+
+      this._handleResponse(response);
     } catch (error) {
       this
           .cardPaymentListener
           .onError("Unable to initiate card transaction. Please try again");
       return;
+    } finally {
+      _stopwatch.stop();
     }
-
-    final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
-        FlutterwaveURLS.CHARGE_CARD_URL;
-
-    _stopwatch.start();
-
-    final http.Response response = await client.post(url,
-        headers: {
-          HttpHeaders.authorizationHeader: this.publicKey,
-          HttpHeaders.contentTypeHeader: "application/json"
-        },
-        body: encryptedPayload);
-
-    _stopwatch.stop();
-    this._handleResponse(response);
   }
 
   /// Responsible for vhandling card payment responses depending on
@@ -112,7 +111,6 @@ class CardPaymentManager {
   void _handleResponse(final http.Response response) {
     try {
       final responseBody = ChargeResponse.fromJson(jsonDecode(response.body));
-
       if (response.statusCode == 200) {
         MetricManager.logMetric(
             http.Client(),
@@ -153,7 +151,7 @@ class CardPaymentManager {
                 responseBody.data.status == FlutterwaveConstants.SUCCESS) &&
             responseBody.data.txRef == this.txRef &&
             responseBody.data.amount == this.amount) {
-          this.cardPaymentListener.onNoAuthRequired(responseBody);
+          return this.cardPaymentListener.onNoAuthRequired(responseBody);
         }
 
         return this
@@ -179,6 +177,7 @@ class CardPaymentManager {
     }
   }
 
+  /// This method is responsible for handling further card authentication
   void _handleExtraCardAuth(
       ChargeResponse response, CardPaymentListener listener) {
     final String authMode = response.meta.authorization.mode;
@@ -186,13 +185,11 @@ class CardPaymentManager {
       return this.cardPaymentListener.onRequireAddress(response);
     }
     if (Authorization.REDIRECT == authMode) {
-      return this
-          .cardPaymentListener
+      return this.cardPaymentListener
           .onRedirect(response, response.meta.authorization.redirect);
     }
     if (Authorization.OTP == authMode) {
-      return this
-          .cardPaymentListener
+      return this.cardPaymentListener
           .onRequireOTP(response, response.data.processorResponse);
     }
     if (Authorization.PIN == authMode)

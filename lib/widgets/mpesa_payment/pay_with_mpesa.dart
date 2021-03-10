@@ -202,7 +202,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
           timer.cancel();
           this._onComplete(response);
         } else {
-          this._showSnackBar(response.message);
+          if (!timer.isActive) this._showSnackBar(response.message);
         }
       } catch (error) {
         timer.cancel();

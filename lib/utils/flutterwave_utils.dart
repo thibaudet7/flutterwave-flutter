@@ -8,7 +8,6 @@ class FlutterwaveUtils {
   /// Encrypts data using 3DES technology.
   /// Returns a String
   static String tripleDESEncrypt(dynamic data, String encryptionKey) {
-    print("encryptionKey is $encryptionKey");
     print("data to encrypt is ${data}");
     try {
       final blockCipher = BlockCipher(TripleDESEngine(), encryptionKey);

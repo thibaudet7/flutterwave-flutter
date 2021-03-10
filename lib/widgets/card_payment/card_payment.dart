@@ -58,12 +58,12 @@ class _CardPaymentState extends State<CardPayment>
         body: Form(
           key: this._cardFormKey,
           child: Container(
-            margin: EdgeInsets.fromLTRB(10, 50, 10, 10),
+            margin: EdgeInsets.fromLTRB(10, 30, 10, 10),
             width: double.infinity,
             child: Column(
               children: [
                 Container(
-                  margin: EdgeInsets.all(20),
+                  margin: EdgeInsets.all(10),
                   alignment: Alignment.topCenter,
                   width: double.infinity,
                   child: Text(
@@ -168,12 +168,6 @@ class _CardPaymentState extends State<CardPayment>
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ),
-                Container(
-                  height: 1.0,
-                  width: double.infinity,
-                  color: Colors.black26,
-                  margin: EdgeInsets.fromLTRB(25, 1, 25, 10),
                 ),
               ],
             ),

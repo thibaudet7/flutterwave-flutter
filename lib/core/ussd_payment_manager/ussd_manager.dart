@@ -48,7 +48,7 @@ class USSDPaymentManager {
             HttpHeaders.authorizationHeader: this.publicKey,
             HttpHeaders.contentTypeHeader: "application/json"
           },
-          body: requestBody);
+          body: jsonEncode(requestBody));
 
       ChargeResponse chargeResponse =
       ChargeResponse.fromJson(json.decode(response.body));
