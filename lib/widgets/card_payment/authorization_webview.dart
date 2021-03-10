@@ -7,8 +7,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class AuthorizationWebview extends StatefulWidget {
   final String _url;
+  final String _redirectUrl;
 
-  AuthorizationWebview(this._url);
+  AuthorizationWebview(this._url, this._redirectUrl);
 
   @override
   _AuthorizationWebviewState createState() => _AuthorizationWebviewState();
@@ -39,10 +40,16 @@ class _AuthorizationWebviewState extends State<AuthorizationWebview> {
   }
 
   void _pageStarted(String url) {
+    final redirectUrl = (this.widget._redirectUrl == null ||
+        this.widget._redirectUrl.isEmpty)
+        ? FlutterwaveURLS.DEFAULT_REDIRECT_URL
+        : this.widget._redirectUrl;
+
     final bool startsWithMyRedirectUrl = url
-            .toString()
-            .indexOf(FlutterwaveURLS.DEFAULT_REDIRECT_URL.toString()) ==
+        .toString()
+        .indexOf(redirectUrl.toString()) ==
         0;
+
     if (url != this.widget._url && startsWithMyRedirectUrl) {
       this._onValidationSuccessful(url);
       return;
@@ -77,14 +84,19 @@ class _AuthorizationWebviewState extends State<AuthorizationWebview> {
   }
 
   void _onValidationSuccessful(String url) {
-    var response = Uri.dataFromString(url).queryParameters["response"];
-    var resp = Uri.dataFromString(url).queryParameters["resp"];
+    var response = Uri
+        .dataFromString(url)
+        .queryParameters["response"];
+    var resp = Uri
+        .dataFromString(url)
+        .queryParameters["resp"];
     if (response != null) {
       return this._handleCardRedirectRequest(response);
     }
     if (resp != null) {
       return this._handleMobileMoneyRedirectRequest(resp);
     }
-    return Navigator.pop(this.context, {"error": "Unable to process transaction"});
+    return Navigator.pop(
+        this.context, {"error": "Unable to process transaction"});
   }
 }

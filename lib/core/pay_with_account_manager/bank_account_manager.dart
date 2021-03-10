@@ -19,6 +19,7 @@ class BankAccountPaymentManager {
   String accountBank;
   String accountNumber;
   String fullName;
+  String redirectUrl;
 
   /// BankAccountPaymentManager constructor
   /// Available for only payments with NGN currency
@@ -33,6 +34,7 @@ class BankAccountPaymentManager {
     @required this.fullName,
     this.accountBank,
     this.accountNumber,
+    this.redirectUrl,
   });
 
 
@@ -49,7 +51,10 @@ class BankAccountPaymentManager {
     final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) + FlutterwaveURLS.PAY_WITH_ACCOUNT;
     try {
       final http.Response response = await client.post(url,
-          headers: {HttpHeaders.authorizationHeader: this.publicKey},
+          headers: {
+            HttpHeaders.authorizationHeader: this.publicKey,
+            HttpHeaders.contentTypeHeader: "application/json"
+          },
           body: requestBody);
 
     MetricManager.logMetric(client,

@@ -36,25 +36,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
       debugShowCheckedModeBanner: widget._paymentManager.isDebugMode,
       home: Scaffold(
         key: this._scaffoldKey,
-        appBar: AppBar(
-          backgroundColor: Color(0xFFfff1d0),
-          title: RichText(
-            textAlign: TextAlign.left,
-            text: TextSpan(
-              text: "Pay with ",
-              style: TextStyle(fontSize: 20, color: Colors.black),
-              children: [
-                TextSpan(
-                  text: "Mpesa",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black),
-                )
-              ],
-            ),
-          ),
-        ),
+        appBar: FlutterwaveViewUtils.appBar(context, "Mpesa"),
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Container(

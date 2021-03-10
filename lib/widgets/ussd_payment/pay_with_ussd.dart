@@ -46,25 +46,7 @@ class _PayWithUssdState extends State<PayWithUssd> {
       debugShowCheckedModeBanner: widget._paymentManager.isDebugMode,
       home: Scaffold(
         key: this._scaffoldKey,
-        appBar: AppBar(
-          backgroundColor: Color(0xFFfff1d0),
-          title: RichText(
-            textAlign: TextAlign.left,
-            text: TextSpan(
-              text: "Pay with ",
-              style: TextStyle(fontSize: 17, color: Colors.black),
-              children: [
-                TextSpan(
-                  text: "USSD",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black),
-                )
-              ],
-            ),
-          ),
-        ),
+        appBar: FlutterwaveViewUtils.appBar(context, "USSD"),
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Container(

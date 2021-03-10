@@ -29,28 +29,29 @@ class CardPaymentManager {
   bool isPermanent;
   String narration;
   String country;
+  String redirectUrl;
 
   ChargeCardRequest chargeCardRequest;
   CardPaymentListener cardPaymentListener;
   Stopwatch _stopwatch = Stopwatch();
 
   /// CardPaymentManager constructor
-  CardPaymentManager({
-    @required this.publicKey,
-    @required this.encryptionKey,
-    @required this.currency,
-    @required this.amount,
-    @required this.email,
-    @required this.fullName,
-    @required this.txRef,
-    @required this.isDebugMode,
-    this.country,
-    this.phoneNumber,
-    this.frequency,
-    this.duration,
-    this.isPermanent,
-    this.narration,
-  });
+  CardPaymentManager(
+      {@required this.publicKey,
+      @required this.encryptionKey,
+      @required this.currency,
+      @required this.amount,
+      @required this.email,
+      @required this.fullName,
+      @required this.txRef,
+      @required this.isDebugMode,
+      this.country,
+      this.phoneNumber,
+      this.frequency,
+      this.duration,
+      this.isPermanent,
+      this.narration,
+      this.redirectUrl});
 
   /// This method is required to add a payment listener to card transactions
   CardPaymentManager setCardPaymentListener(
@@ -63,17 +64,14 @@ class CardPaymentManager {
   /// it returns a map
   Map<String, String> _prepareRequest(
       final ChargeCardRequest chargeCardRequest) {
-
     final String encryptedChargeRequest = FlutterwaveUtils.tripleDESEncrypt(
         jsonEncode(chargeCardRequest.toJson()), encryptionKey);
     return FlutterwaveUtils.createCardRequest(encryptedChargeRequest);
   }
 
   /// Initiates Card Request
-  Future<dynamic> payWithCard(
-      final http.Client client,
+  Future<dynamic> payWithCard(final http.Client client,
       final ChargeCardRequest chargeCardRequest) async {
-
     Map<String, String> encryptedPayload;
     this.chargeCardRequest = chargeCardRequest;
 
@@ -82,12 +80,14 @@ class CardPaymentManager {
       return;
     }
 
-     try {
-        encryptedPayload = this._prepareRequest(chargeCardRequest);
-     } catch(error){
-       this.cardPaymentListener.onError("Unable to initiate card transaction. Please try again");
-       return;
-     }
+    try {
+      encryptedPayload = this._prepareRequest(chargeCardRequest);
+    } catch (error) {
+      this
+          .cardPaymentListener
+          .onError("Unable to initiate card transaction. Please try again");
+      return;
+    }
 
     final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
         FlutterwaveURLS.CHARGE_CARD_URL;
@@ -95,7 +95,10 @@ class CardPaymentManager {
     _stopwatch.start();
 
     final http.Response response = await client.post(url,
-        headers: {HttpHeaders.authorizationHeader: this.publicKey},
+        headers: {
+          HttpHeaders.authorizationHeader: this.publicKey,
+          HttpHeaders.contentTypeHeader: "application/json"
+        },
         body: encryptedPayload);
 
     _stopwatch.stop();
@@ -111,8 +114,8 @@ class CardPaymentManager {
       final responseBody = ChargeResponse.fromJson(jsonDecode(response.body));
 
       if (response.statusCode == 200) {
-        MetricManager.
-        logMetric(http.Client(),
+        MetricManager.logMetric(
+            http.Client(),
             this.publicKey,
             MetricManager.INITIATE_CARD_CHARGE,
             "${_stopwatch.elapsedMilliseconds}ms");
@@ -123,7 +126,7 @@ class CardPaymentManager {
                 (responseBody.meta.authorization.mode != null);
 
         final bool is3DS = (responseBody.message ==
-            FlutterwaveConstants.CHARGE_INITIATED) &&
+                FlutterwaveConstants.CHARGE_INITIATED) &&
             (responseBody.meta.authorization.mode == Authorization.REDIRECT);
 
         final bool requiresOtp =
@@ -143,9 +146,23 @@ class CardPaymentManager {
               .cardPaymentListener
               .onRequireOTP(responseBody, responseBody.data.processorResponse);
         }
-        return;
+
+        if (responseBody.status == FlutterwaveConstants.SUCCESS &&
+            responseBody.data != null &&
+            (responseBody.data.status == FlutterwaveConstants.SUCCESSFUL ||
+                responseBody.data.status == FlutterwaveConstants.SUCCESS) &&
+            responseBody.data.txRef == this.txRef &&
+            responseBody.data.amount == this.amount) {
+          this.cardPaymentListener.onNoAuthRequired(responseBody);
+        }
+
+        return this
+            .cardPaymentListener
+            .onError("Unable to complete payment. Please try another card");
       }
-      MetricManager.logMetric(http.Client(),
+
+      MetricManager.logMetric(
+          http.Client(),
           this.publicKey,
           MetricManager.INITIATE_CARD_CHARGE_ERROR,
           "${_stopwatch.elapsedMilliseconds}ms");

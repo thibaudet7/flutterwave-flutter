@@ -16,6 +16,7 @@ class USSDPaymentManager {
   bool isDebugMode;
   String phoneNumber;
   String fullName;
+  String redirectUrl;
 
   /// USSDPaymentManager constructor
   /// Available for only payments with NGN currency
@@ -29,6 +30,7 @@ class USSDPaymentManager {
     @required this.isDebugMode,
     @required this.phoneNumber,
     @required this.fullName,
+    this.redirectUrl
   });
 
   /// Initiates payments via USSD
@@ -42,7 +44,10 @@ class USSDPaymentManager {
         FlutterwaveURLS.PAY_WITH_USSD;
     try {
       final http.Response response = await client.post(url,
-          headers: {HttpHeaders.authorizationHeader: this.publicKey},
+          headers: {
+            HttpHeaders.authorizationHeader: this.publicKey,
+            HttpHeaders.contentTypeHeader: "application/json"
+          },
           body: requestBody);
 
       ChargeResponse chargeResponse =

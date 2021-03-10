@@ -62,25 +62,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
       debugShowCheckedModeBanner: widget._paymentManager.isDebugMode,
       home: Scaffold(
         key: this._scaffoldKey,
-        appBar: AppBar(
-          backgroundColor: Color(0xFFfff1d0),
-          title: RichText(
-            textAlign: TextAlign.left,
-            text: TextSpan(
-              text: "Pay with ",
-              style: TextStyle(fontSize: 20, color: Colors.black),
-              children: [
-                TextSpan(
-                  text: "Account",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black),
-                )
-              ],
-            ),
-          ),
-        ),
+        appBar: FlutterwaveViewUtils.appBar(context, "Bank Account"),
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Container(
@@ -347,30 +329,6 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
         intialCount = intialCount + 1;
       }
     });
-
-    // response = await FlutterwaveAPIUtils.verifyPayment(
-    //     chargeResponse.data.flwRef,
-    //     http.Client(),
-    //     this.widget._paymentManager.publicKey,
-    //     this.widget._paymentManager.isDebugMode,
-    //     MetricManager.ACCOUNT_CHARGE_VERIFY);
-    //
-    // this._closeDialog();
-    //
-    // if (response.status == FlutterwaveConstants.ERROR ||
-    //     response.data == null) {
-    //   this._showSnackBar(response.message);
-    //   this._onPaymentComplete(response);
-    //   return;
-    // }
-    // if (response.status == FlutterwaveConstants.SUCCESS &&
-    //     response.data.amount == this.widget._paymentManager.amount &&
-    //     response.data.txRef == this.widget._paymentManager.txRef) {
-    //   this._onPaymentComplete(response);
-    //   return;
-    // }
-    // this._onPaymentComplete(response);
-    // this._showSnackBar(response.message);
     return;
   }
 
@@ -401,7 +359,8 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
       return;
     }
     final flw = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => AuthorizationWebview(Uri.encodeFull(url))));
+        builder: (context) => AuthorizationWebview(Uri.encodeFull(url),
+            this.widget._paymentManager.redirectUrl)));
     if (response == null) {
       this._showSnackBar("Transaction cancelled.");
       return;
@@ -505,7 +464,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
         this.context,
         MaterialPageRoute(
             builder: (context) =>
-                AuthorizationWebview(Uri.encodeFull(response.data.authUrl))));
+                AuthorizationWebview(Uri.encodeFull(response.data.authUrl), this.widget._paymentManager.redirectUrl)));
     if (result != null) {
       this._verifyPayment(response);
     }

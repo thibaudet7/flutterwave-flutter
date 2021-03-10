@@ -23,8 +23,7 @@ class MobileMoneyRequest {
       this.network = "",
       this.voucher = "",
       this.country = "",
-      this.redirectUrl = FlutterwaveURLS.DEFAULT_REDIRECT_URL});
-
+      this.redirectUrl});
 
   /// Converts MobileMoneyRequest instance to json
   Map<String, dynamic> toJson() {
@@ -36,7 +35,9 @@ class MobileMoneyRequest {
       'fullname': this.fullName,
       'email': this.email,
       'phone_number': this.phoneNumber,
-      'redirect_url': this.redirectUrl,
+      'redirect_url': (this.redirectUrl == null || this.redirectUrl.isEmpty)
+          ? FlutterwaveURLS.DEFAULT_REDIRECT_URL
+          : this.redirectUrl,
       'voucher': this.voucher,
       'country': this.country
     };

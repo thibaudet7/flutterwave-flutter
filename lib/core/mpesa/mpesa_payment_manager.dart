@@ -16,18 +16,19 @@ class MpesaPaymentManager {
   String phoneNumber;
   String fullName;
   String email;
+  String redirectUrl;
 
   /// MpesaPaymentManager constructor.
-  MpesaPaymentManager({
-    @required this.publicKey,
-    @required this.isDebugMode,
-    @required this.amount,
-    @required this.currency,
-    @required this.email,
-    @required this.txRef,
-    @required this.fullName,
-    @required this.phoneNumber,
-  });
+  MpesaPaymentManager(
+      {@required this.publicKey,
+      @required this.isDebugMode,
+      @required this.amount,
+      @required this.currency,
+      @required this.email,
+      @required this.txRef,
+      @required this.fullName,
+      @required this.phoneNumber,
+      this.redirectUrl});
 
   /// Returns an instance of MpesaPaymentManager from a map
   MpesaPaymentManager.fromJson(Map<String, dynamic> json) {
@@ -38,7 +39,6 @@ class MpesaPaymentManager {
     this.fullName = json['fullname'];
     this.phoneNumber = json["phone_number"];
   }
-
 
   /// Converts instance of MpesaPaymentManager to a map
   Map<String, dynamic> toJson() {
@@ -52,23 +52,25 @@ class MpesaPaymentManager {
     };
   }
 
-
   /// Initiates payments via Mpesa
   /// Available for only payments with KES currency
   /// returns an instance of ChargeResponse or throws an error
-  Future<ChargeResponse> payWithMpesa(MpesaRequest payload,
-      http.Client client) async {
+  Future<ChargeResponse> payWithMpesa(
+      MpesaRequest payload, http.Client client) async {
     final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
         FlutterwaveURLS.PAY_WITH_MPESA;
     try {
       final http.Response response = await client.post(url,
-          headers: {HttpHeaders.authorizationHeader: this.publicKey},
+          headers: {
+            HttpHeaders.authorizationHeader: this.publicKey,
+            HttpHeaders.contentTypeHeader: "application/json"
+          },
           body: payload.toJson());
 
       ChargeResponse chargeResponse =
-      ChargeResponse.fromJson(json.decode(response.body));
+          ChargeResponse.fromJson(json.decode(response.body));
 
-    return chargeResponse;
+      return chargeResponse;
     } catch (error) {
       throw (FlutterError(error.toString()));
     } finally {

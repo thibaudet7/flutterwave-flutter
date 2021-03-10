@@ -22,6 +22,7 @@ class BankTransferPaymentManager {
   int duration;
   bool isPermanent;
   String narration;
+  String redirectUrl;
 
   /// Bank Transfer Payment Manager Constructor
   /// This is responsible for creating instances of BankTransferPaymentManager
@@ -37,6 +38,7 @@ class BankTransferPaymentManager {
     @required this.narration,
     this.duration,
     this.isPermanent,
+    this.redirectUrl
   });
 
   /// Resposnsible for making payments with bank transfer
@@ -67,7 +69,10 @@ class BankTransferPaymentManager {
     final payload = verifyRequest.toJson();
     try {
       final http.Response response = await client.post(url,
-          headers: {HttpHeaders.authorizationHeader: this.publicKey},
+          headers: {
+            HttpHeaders.authorizationHeader: this.publicKey,
+            HttpHeaders.contentTypeHeader: "application/json"
+          },
           body: payload);
 
       final ChargeResponse cardResponse =

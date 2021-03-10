@@ -48,25 +48,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
       debugShowCheckedModeBanner: widget._paymentManager.isDebugMode,
       home: Scaffold(
         key: this._scaffoldKey,
-        appBar: AppBar(
-          backgroundColor: Color(0xFFfff1d0),
-          title: RichText(
-            textAlign: TextAlign.left,
-            text: TextSpan(
-              text: "Pay with ",
-              style: TextStyle(fontSize: 20, color: Colors.black),
-              children: [
-                TextSpan(
-                  text: this._getPageTitle(currency),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black),
-                )
-              ],
-            ),
-          ),
-        ),
+        appBar: FlutterwaveViewUtils.appBar(context, _getPageTitle(currency)),
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Container(
@@ -97,8 +79,9 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
                     ),
                   ),
                   Visibility(
-                    visible: currency.toUpperCase() == FlutterwaveCurrency.XAF ||
-                        currency.toUpperCase() == FlutterwaveCurrency.XOF,
+                    visible:
+                        currency.toUpperCase() == FlutterwaveCurrency.XAF ||
+                            currency.toUpperCase() == FlutterwaveCurrency.XOF,
                     child: Container(
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                       width: double.infinity,
@@ -212,8 +195,9 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
   }
 
   Widget _getNetworksThatAllowMobileMoney() {
-    final networks = FlutterwaveCurrency.getAllowedMobileMoneyNetworksByCurrency(
-        this.widget._paymentManager.currency);
+    final networks =
+        FlutterwaveCurrency.getAllowedMobileMoneyNetworksByCurrency(
+            this.widget._paymentManager.currency);
     return Container(
       height: 220,
       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -339,6 +323,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
       email: mobileMoneyPaymentManager.email,
       phoneNumber: this._phoneNumberController.text,
       voucher: this._voucherController.text,
+      redirectUrl: mobileMoneyPaymentManager.redirectUrl,
       country: this.selectedFrancophoneCountry == null
           ? ""
           : this.selectedFrancophoneCountry.countryCode,
@@ -354,7 +339,8 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
           FlutterwaveConstants.CHARGE_INITIATED == response.message) {
         if (response.meta.authorization.mode == Authorization.REDIRECT &&
             response.meta.authorization.redirect != null) {
-          this._openOtpScreen(response.meta.authorization.redirect, response.data.id);
+          this._openOtpScreen(
+              response.meta.authorization.redirect, response.data.id);
           return;
         }
         if (response.meta.authorization.mode == Authorization.CALLBACK) {
@@ -375,7 +361,8 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
     final result = await Navigator.push(
       this.context,
       MaterialPageRoute(
-          builder: (context) => AuthorizationWebview(Uri.encodeFull(url))),
+          builder: (context) => AuthorizationWebview(
+              Uri.encodeFull(url), this.widget._paymentManager.redirectUrl)),
     );
     if (result != null) {
       if (result.runtimeType == " ".runtimeType) {

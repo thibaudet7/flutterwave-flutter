@@ -16,6 +16,7 @@ class VoucherPaymentManager {
   String phoneNumber;
   String fullName;
   String email;
+  String redirectUrl;
 
   /// VoucherPaymentManager constructor
   /// returns an instance of VoucherPaymentManager
@@ -28,6 +29,7 @@ class VoucherPaymentManager {
     @required this.txRef,
     @required this.fullName,
     @required this.phoneNumber,
+    this.redirectUrl
   });
 
   /// VoucherPaymentManager constructor

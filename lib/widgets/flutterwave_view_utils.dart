@@ -45,4 +45,34 @@ class FlutterwaveViewUtils {
       },
     );
   }
+
+  static void _goBackToPaymentScreen(final BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
+  static Widget appBar(final BuildContext context, final String title) {
+    return AppBar(
+      backgroundColor: Color(0xFFfff1d0),
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () => FlutterwaveViewUtils._goBackToPaymentScreen(context),
+      ),
+      title: RichText(
+        textAlign: TextAlign.left,
+        text: TextSpan(
+          text: "Pay with ",
+          style: TextStyle(fontSize: 20, color: Colors.black),
+          children: [
+            TextSpan(
+              text: title,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.black),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }

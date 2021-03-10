@@ -37,7 +37,7 @@ class FlutterwavePaymentManager {
   bool acceptFancophoneMobileMoney;
   bool acceptVoucherPayment;
   String country;
-
+  String redirectUrl;
 
   /// FlutterwavePaymentManager Constructor
   FlutterwavePaymentManager(
@@ -69,6 +69,7 @@ class FlutterwavePaymentManager {
       this.duration,
       this.isPermanent,
       this.narration,
+      this.redirectUrl,
       this.network = ""});
 
   /// Returns an instance of CardPaymentManager
@@ -87,7 +88,8 @@ class FlutterwavePaymentManager {
         phoneNumber: this.phoneNumber,
         frequency: this.frequency,
         country: this.country,
-        duration: this.duration);
+        duration: this.duration,
+        redirectUrl: this.redirectUrl);
   }
 
   /// Returns an instance of BankTransferPaymentManager
@@ -103,7 +105,8 @@ class FlutterwavePaymentManager {
         isPermanent: this.isPermanent,
         phoneNumber: this.phoneNumber,
         frequency: this.frequency,
-        duration: this.duration);
+        duration: this.duration,
+        redirectUrl: this.redirectUrl);
   }
 
   /// Returns an instance of BankAccountPaymentManager
@@ -116,7 +119,8 @@ class FlutterwavePaymentManager {
         txRef: this.txRef,
         isDebugMode: this.isDebugMode,
         phoneNumber: this.phoneNumber,
-        fullName: this.fullName);
+        fullName: this.fullName,
+        redirectUrl: this.redirectUrl);
   }
 
   /// Returns an instance of USSDPaymentManager
@@ -129,7 +133,8 @@ class FlutterwavePaymentManager {
         txRef: this.txRef,
         isDebugMode: this.isDebugMode,
         phoneNumber: this.phoneNumber,
-        fullName: this.fullName);
+        fullName: this.fullName,
+        redirectUrl: this.redirectUrl);
   }
 
   /// Returns an instance of MobileMoneyPaymentManager
@@ -143,7 +148,8 @@ class FlutterwavePaymentManager {
         isDebugMode: this.isDebugMode,
         phoneNumber: this.phoneNumber,
         fullName: this.fullName,
-        email: this.email);
+        email: this.email,
+        redirectUrl: this.redirectUrl);
   }
 
   /// Returns an instance of MpesaPaymentManager
@@ -156,7 +162,8 @@ class FlutterwavePaymentManager {
         isDebugMode: this.isDebugMode,
         phoneNumber: this.phoneNumber,
         fullName: this.fullName,
-        email: this.email);
+        email: this.email,
+        redirectUrl: this.redirectUrl);
   }
 
   /// Returns an instance of VoucherPaymentManager
@@ -169,6 +176,7 @@ class FlutterwavePaymentManager {
         isDebugMode: this.isDebugMode,
         phoneNumber: this.phoneNumber,
         fullName: this.fullName,
-        email: this.email);
+        email: this.email,
+        redirectUrl: this.redirectUrl);
   }
 }

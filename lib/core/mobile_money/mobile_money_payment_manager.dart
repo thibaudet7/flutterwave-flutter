@@ -17,6 +17,7 @@ class MobileMoneyPaymentManager {
   String phoneNumber;
   String fullName;
   String email;
+  String redirectUrl;
 
   /// MobileMoneyPaymentManager constructor
   MobileMoneyPaymentManager({
@@ -29,6 +30,7 @@ class MobileMoneyPaymentManager {
     @required this.fullName,
     @required this.email,
     this.network,
+    this.redirectUrl
   });
 
 
@@ -41,7 +43,10 @@ class MobileMoneyPaymentManager {
         FlutterwaveURLS.getMobileMoneyUrl(this.currency);
     try {
       final http.Response response = await client.post(url,
-          headers: {HttpHeaders.authorizationHeader: this.publicKey},
+          headers: {
+            HttpHeaders.authorizationHeader: this.publicKey,
+            HttpHeaders.contentTypeHeader: "application/json"
+          },
           body: requestBody);
       ChargeResponse chargeResponse = ChargeResponse.fromJson(json.decode(response.body));
       return chargeResponse;
