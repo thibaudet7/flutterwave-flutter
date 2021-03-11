@@ -263,6 +263,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
         ? "Unable to continue payment with account"
         : response.message;
     this._closeDialog();
+    print("response is ${response.toJson()}");
     this._showSnackBar(errorMessage!);
   }
 

@@ -172,7 +172,6 @@ class _PayWithBankTransferState extends State<PayWithBankTransfer> {
   }
 
   void _onPaymentComplete(final ChargeResponse chargeResponse) {
-    this._showSnackBar("Transaction completed.");
     Navigator.pop(this.context, chargeResponse);
   }
 

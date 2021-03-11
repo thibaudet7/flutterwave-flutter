@@ -43,7 +43,7 @@ Flutterwave version 3 API keys
 
 In your `pubspec.yaml` file add:
 
-1. `flutterwave: 0.0.3`
+1. `flutterwave: 0.0.3-dev.1`
 2. run `flutter pub get`
 
 <a id="usage"></a>

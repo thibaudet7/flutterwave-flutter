@@ -17,7 +17,7 @@ class FlutterwaveAPIUtils {
   static Future<List<Bank>> getBanks(final http.Client client) async {
     try {
       final response = await client.get(
-        Uri.parse("api.flutterwave.com/v3/banks/NG"),
+        Uri.parse("https://api.flutterwave.com/v3/banks/NG"),
         headers: {
           HttpHeaders.authorizationHeader:
               "Bearer FLWSECK_TEST-SANDBOXDEMOKEY-X",
@@ -25,21 +25,14 @@ class FlutterwaveAPIUtils {
         },
       );
       if (response.statusCode == 200) {
-        // final GetBanksResponse jsonDecoded =
-        //     GetBanksResponse.fromJson(jsonDecode(response.body));
-        // print("Json is ${jsonDecoded.toJson()}");
-        final List<Bank> banks = List.castFrom(jsonDecode(response.body)["data"]);
-        // jsonDecoded.map((json) => GetBanksResponse.fromJson(json)).toList();
-        print("banks is $banks");
-        print("Raw is ${jsonDecode(response.body)}");
-        print("data is ${jsonDecode(response.body)["data"]}");
-        return banks;
+        final List<dynamic> banks = jsonDecode(response.body)["data"];
+        final result = banks.map((e) => Bank.fromJson(e)).toList();
+        return result;
       } else {
         throw (FlutterWaveError(
             "Unable to fetch banks. Please contact support"));
       }
     } catch (error) {
-      print("bank error -> $error");
       throw (FlutterWaveError(error.toString()));
     } finally {
       client.close();

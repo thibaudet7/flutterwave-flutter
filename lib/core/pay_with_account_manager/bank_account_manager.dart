@@ -64,8 +64,10 @@ class BankAccountPaymentManager {
 
       ChargeResponse bankTransferResponse =
           ChargeResponse.fromJson(json.decode(response.body));
+
       return bankTransferResponse;
     } catch (error) {
+
       MetricManager.logMetric(
           client,
           publicKey,

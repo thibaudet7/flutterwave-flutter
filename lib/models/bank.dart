@@ -1,14 +1,14 @@
 class Bank {
   String? id;
-  String?name;
+  String? name;
   String? code;
 
   Bank({this.name, this.code, this.id});
 
-  Bank.fromJson(Map<String, dynamic> json) {
+  Bank.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
     code = json['code'];
-    id = json['id'];
+    id = json['id'].toString();
   }
 
   Map<String, dynamic> toJson() {
