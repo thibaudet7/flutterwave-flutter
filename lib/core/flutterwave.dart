@@ -26,24 +26,27 @@ class Flutterwave {
   bool acceptGhanaPayment;
   bool acceptUgandaPayment;
   bool acceptFrancophoneMobileMoney;
+  bool acceptBankTransfer;
   String phoneNumber;
-  int frequency;
+  int? frequency;
   int duration;
   bool isPermanent;
   String narration;
+  String? country;
+
 
   /// Flutterwave Constructor
   Flutterwave.forUIPayment({
-    @required this.context,
-    @required this.publicKey,
-    @required this.encryptionKey,
-    @required this.currency,
-    @required this.amount,
-    @required this.email,
-    @required this.fullName,
-    @required this.txRef,
-    @required this.isDebugMode,
-    @required this.phoneNumber,
+    required this.context,
+    required this.publicKey,
+    required this.encryptionKey,
+    required this.currency,
+    required this.amount,
+    required this.email,
+    required this.fullName,
+    required this.txRef,
+    required this.isDebugMode,
+    required this.phoneNumber,
     this.frequency,
     this.duration = 0,
     this.isPermanent = false,
@@ -57,6 +60,7 @@ class Flutterwave {
     this.acceptGhanaPayment = false,
     this.acceptUgandaPayment = false,
     this.acceptFrancophoneMobileMoney = false,
+    this.acceptBankTransfer = false,
     this.redirectUrl = ""
 
   }) {
@@ -80,6 +84,7 @@ class Flutterwave {
       this.acceptUgandaPayment = false;
       this.acceptFrancophoneMobileMoney = false;
       this.acceptAccountPayment = false;
+      this.acceptBankTransfer = false;
     }
     if (this.currency == FlutterwaveCurrency.RWF) {
       this.acceptRwandaMoneyPayment = true;
@@ -91,6 +96,7 @@ class Flutterwave {
       this.acceptFrancophoneMobileMoney = false;
       this.acceptAccountPayment = false;
       this.acceptUSSDPayment = false;
+      this.acceptBankTransfer = false;
     }
     if (this.currency == FlutterwaveCurrency.UGX) {
       this.acceptUgandaPayment = true;
@@ -101,6 +107,7 @@ class Flutterwave {
       this.acceptAccountPayment = false;
       this.acceptUSSDPayment = false;
       this.acceptRwandaMoneyPayment = false;
+      this.acceptBankTransfer = false;
     }
     if (this.currency == FlutterwaveCurrency.ZMW) {
       this.acceptZambiaPayment = true;
@@ -112,6 +119,7 @@ class Flutterwave {
       this.acceptUgandaPayment = false;
       this.acceptFrancophoneMobileMoney = false;
       this.acceptUSSDPayment = false;
+      this.acceptBankTransfer = false;
     }
     if (this.currency == FlutterwaveCurrency.GHS) {
       this.acceptGhanaPayment = true;
@@ -121,6 +129,7 @@ class Flutterwave {
       this.acceptUgandaPayment = false;
       this.acceptFrancophoneMobileMoney = false;
       this.acceptUSSDPayment = false;
+      this.acceptBankTransfer = false;
     }
     if (this.currency == FlutterwaveCurrency.XAF ||
         this.currency == FlutterwaveCurrency.XOF) {
@@ -131,10 +140,9 @@ class Flutterwave {
       this.acceptGhanaPayment = false;
       this.acceptUgandaPayment = false;
       this.acceptUSSDPayment = false;
+      this.acceptBankTransfer = false;
     }
   }
-
-  String country;
 
   String _setCountry() {
     switch (this.currency) {
@@ -184,6 +192,7 @@ class Flutterwave {
         acceptZambiaPayment: this.acceptZambiaPayment,
         acceptGhanaPayment: this.acceptGhanaPayment,
         acceptUgandaPayment: this.acceptUgandaPayment,
+        acceptBankTransferPayment: this.acceptBankTransfer,
         acceptFancophoneMobileMoney: this.acceptFrancophoneMobileMoney,
         country: this._setCountry());
 

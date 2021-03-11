@@ -16,29 +16,19 @@ class MpesaPaymentManager {
   String phoneNumber;
   String fullName;
   String email;
-  String redirectUrl;
+  String? redirectUrl;
 
   /// MpesaPaymentManager constructor.
   MpesaPaymentManager(
-      {@required this.publicKey,
-      @required this.isDebugMode,
-      @required this.amount,
-      @required this.currency,
-      @required this.email,
-      @required this.txRef,
-      @required this.fullName,
-      @required this.phoneNumber,
+      {required this.publicKey,
+      required this.isDebugMode,
+      required this.amount,
+      required this.currency,
+      required this.email,
+      required this.txRef,
+      required this.fullName,
+      required this.phoneNumber,
       this.redirectUrl});
-
-  /// Returns an instance of MpesaPaymentManager from a map
-  MpesaPaymentManager.fromJson(Map<String, dynamic> json) {
-    this.amount = json['amount'];
-    this.currency = json['currency'];
-    this.email = json['email'];
-    this.txRef = json['tx_ref'];
-    this.fullName = json['fullname'];
-    this.phoneNumber = json["phone_number"];
-  }
 
   /// Converts instance of MpesaPaymentManager to a map
   Map<String, dynamic> toJson() {
@@ -59,9 +49,10 @@ class MpesaPaymentManager {
       MpesaRequest payload, http.Client client) async {
     final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
         FlutterwaveURLS.PAY_WITH_MPESA;
+    final uri = Uri.parse(url);
     try {
 
-      final http.Response response = await client.post(url,
+      final http.Response response = await client.post(uri,
           headers: {
             HttpHeaders.authorizationHeader: this.publicKey,
             HttpHeaders.contentTypeHeader:'application/json'

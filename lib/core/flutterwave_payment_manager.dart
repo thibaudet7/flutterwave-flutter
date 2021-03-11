@@ -17,11 +17,6 @@ class FlutterwavePaymentManager {
   String txRef;
   bool isDebugMode;
   String phoneNumber;
-  int frequency;
-  int duration;
-  bool isPermanent;
-  String narration;
-  String network;
   bool acceptAccountPayment;
   bool acceptBankTransferPayment;
   bool acceptCardPayment;
@@ -36,20 +31,25 @@ class FlutterwavePaymentManager {
   bool acceptSouthAfricaBankPayment;
   bool acceptFancophoneMobileMoney;
   bool acceptVoucherPayment;
-  String country;
-  String redirectUrl;
+  int? frequency;
+  int? duration;
+  bool? isPermanent;
+  String? narration;
+  String? network;
+  String? country;
+  String? redirectUrl;
 
   /// FlutterwavePaymentManager Constructor
   FlutterwavePaymentManager(
-      {@required this.publicKey,
-      @required this.encryptionKey,
-      @required this.currency,
-      @required this.amount,
-      @required this.email,
-      @required this.fullName,
-      @required this.txRef,
-      @required this.isDebugMode,
-      @required this.phoneNumber,
+      {required this.publicKey,
+      required this.encryptionKey,
+      required this.currency,
+      required this.amount,
+      required this.email,
+      required this.fullName,
+      required this.txRef,
+      required this.isDebugMode,
+      required this.phoneNumber,
       this.country,
       this.acceptAccountPayment = false,
       this.acceptBankTransferPayment = false,

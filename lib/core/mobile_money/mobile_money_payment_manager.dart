@@ -11,24 +11,24 @@ class MobileMoneyPaymentManager {
   String publicKey;
   String currency;
   String amount;
-  String network;
+  String? network;
   String txRef;
   bool isDebugMode;
   String phoneNumber;
   String fullName;
   String email;
-  String redirectUrl;
+  String? redirectUrl;
 
   /// MobileMoneyPaymentManager constructor
   MobileMoneyPaymentManager(
-      {@required this.publicKey,
-      @required this.currency,
-      @required this.amount,
-      @required this.txRef,
-      @required this.isDebugMode,
-      @required this.phoneNumber,
-      @required this.fullName,
-      @required this.email,
+      {required this.publicKey,
+      required this.currency,
+      required this.amount,
+      required this.txRef,
+      required this.isDebugMode,
+      required this.phoneNumber,
+      required this.fullName,
+      required this.email,
       this.network,
       this.redirectUrl});
 
@@ -37,10 +37,14 @@ class MobileMoneyPaymentManager {
   Future<ChargeResponse> payWithMobileMoney(
       MobileMoneyRequest mobileMoneyRequest, http.Client client) async {
     final requestBody = mobileMoneyRequest.toJson();
+
+    print("momo manager number --> $phoneNumber");
+    print("momo request --> $requestBody");
     final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
         FlutterwaveURLS.getMobileMoneyUrl(this.currency);
+    final uri = Uri.parse(url);
     try {
-      final http.Response response = await client.post(url,
+      final http.Response response = await client.post(uri,
           headers: {
             HttpHeaders.authorizationHeader: this.publicKey,
             HttpHeaders.contentTypeHeader: "application/json"

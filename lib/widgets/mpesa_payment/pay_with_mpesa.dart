@@ -24,7 +24,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  BuildContext loadingDialogContext;
+  BuildContext? loadingDialogContext;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
                     ),
                     controller: this._phoneNumberController,
                     validator: (value) =>
-                        value.isEmpty ? "Phone number is required" : null,
+                        value != null && value.isEmpty ? "Phone number is required" : null,
                   ),
                   Container(
                     width: double.infinity,
@@ -79,10 +79,9 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
   }
 
   void _onPayPressed() {
-    if (this._formKey.currentState.validate()) {
+    if (this._formKey.currentState!.validate()) {
       this._removeFocusFromView();
-      if (this._phoneNumberController.text != null &&
-          this._phoneNumberController.text.isNotEmpty) {
+      if (this._phoneNumberController.text.isNotEmpty) {
         this.widget._paymentManager.phoneNumber =
             this._phoneNumberController.text;
       }
@@ -121,7 +120,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
 
   void _closeDialog() {
     if (this.loadingDialogContext != null) {
-      Navigator.of(this.loadingDialogContext).pop();
+      Navigator.of(this.loadingDialogContext!).pop();
       this.loadingDialogContext = null;
     }
   }
@@ -137,7 +136,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
         textAlign: TextAlign.center,
       ),
     );
-    this._scaffoldKey.currentState.showSnackBar(snackBar);
+    this._scaffoldKey.currentState!.showSnackBar(snackBar);
   }
 
   void _handlePayment() async {
@@ -162,7 +161,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
           FlutterwaveConstants.CHARGE_INITIATED == response.message) {
         this._verifyPayment(response);
       } else {
-        this._showSnackBar(response.message);
+        this._showSnackBar(response.message!);
       }
     } catch (error) {
       this._closeDialog();
@@ -177,7 +176,7 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
     final numberOfTries = timeOutInSeconds / requestIntervalInSeconds;
     int intialCount = 0;
 
-    ChargeResponse response;
+    ChargeResponse? response;
 
     this._showLoading(FlutterwaveConstants.VERIFYING);
     final client = http.Client();
@@ -185,24 +184,27 @@ class _PayWithMpesaState extends State<PayWithMpesa> {
       try {
         if (intialCount == numberOfTries) {
           timer.cancel();
-          return this._onComplete(response);
+          return this._onComplete(response!);
         }
         response = await FlutterwaveAPIUtils.verifyPayment(
-            chargeResponse.data.flwRef,
+            chargeResponse.data!.flwRef!,
             client,
             this.widget._paymentManager.publicKey,
             this.widget._paymentManager.isDebugMode);
 
-        if ((response.data.status == FlutterwaveConstants.SUCCESS ||
-                response.data.status == FlutterwaveConstants.SUCCESSFUL) &&
-            response.data.amount ==
+        if ((response!.data!.status == FlutterwaveConstants.SUCCESS ||
+                response!.data!.status == FlutterwaveConstants.SUCCESSFUL) &&
+            response!.data!.amount ==
                 this.widget._paymentManager.amount.toString() &&
-            response.data.flwRef == chargeResponse.data.flwRef &&
-            response.data.currency == this.widget._paymentManager.currency) {
+            response!.data!.flwRef == chargeResponse.data!.flwRef &&
+            response!.data!.currency == this.widget._paymentManager.currency) {
           timer.cancel();
-          this._onComplete(response);
+          this._onComplete(response!);
         } else {
-          if (!timer.isActive) this._showSnackBar(response.message);
+          if (!timer.isActive) {
+            this._closeDialog();
+            this._showSnackBar(response!.message!);
+          }
         }
       } catch (error) {
         timer.cancel();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterwave/core/bank_transfer_manager/bank_transfer_payment_manager.dart';
 import 'package:flutterwave/core/card_payment_manager/card_payment_manager.dart';
 import 'package:flutterwave/core/flutterwave_payment_manager.dart';
 import 'package:flutterwave/core/mobile_money/mobile_money_payment_manager.dart';
@@ -8,6 +9,7 @@ import 'package:flutterwave/core/ussd_payment_manager/ussd_manager.dart';
 import 'package:flutterwave/core/voucher_payment/voucher_payment_manager.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
 import 'package:flutterwave/widgets/bank_account_payment/bank_account_payment.dart';
+import 'package:flutterwave/widgets/bank_transfer_payment/bank_transfer_payment.dart';
 import 'package:flutterwave/widgets/card_payment/card_payment.dart';
 import 'package:flutterwave/widgets/mobile_money/pay_with_mobile_money.dart';
 import 'package:flutterwave/widgets/mpesa_payment/pay_with_mpesa.dart';
@@ -154,6 +156,24 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
                                   child: FlutterwavePaymentOption(
                                     handleClick: this._launchUSSDPaymentWidget,
                                     buttonText: "USSD",
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 0.5,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Visibility(
+                            visible: paymentManager.acceptBankTransferPayment,
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 50.0,
+                                  child: FlutterwavePaymentOption(
+                                    handleClick:
+                                    this._launchBankTransferPaymentWidget,
+                                    buttonText: "Bank Transfer",
                                   ),
                                 ),
                                 SizedBox(
@@ -373,6 +393,17 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
     _handleBackPress(response);
   }
 
+  void _launchBankTransferPaymentWidget() async {
+    final BankTransferPaymentManager bankTransferPaymentManager =
+    this.widget._flutterwavePaymentManager.getBankTransferPaymentManager();
+    final response = await Navigator.push(
+      this.context,
+      MaterialPageRoute(
+          builder: (context) => PayWithBankTransfer(bankTransferPaymentManager)),
+    );
+    _handleBackPress(response);
+  }
+
   void showSnackBar(String message) {
     SnackBar snackBar = SnackBar(
       content: Text(
@@ -380,15 +411,15 @@ class _FlutterwaveUIState extends State<FlutterwaveUI> {
         textAlign: TextAlign.center,
       ),
     );
-    this._scaffoldKey.currentState.showSnackBar(snackBar);
+    this._scaffoldKey.currentState!.showSnackBar(snackBar);
   }
 
   void _handleBackPress(dynamic result) {
     if (result == null || result is ChargeResponse){
-      final ChargeResponse chargeResponse = result as ChargeResponse;
+      final ChargeResponse? chargeResponse = result as ChargeResponse;
       String message;
       if (chargeResponse != null) {
-        message = chargeResponse.message;
+        message = chargeResponse.message!;
       } else {
         message = "Transaction cancelled";
       }

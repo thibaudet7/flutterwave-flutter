@@ -24,7 +24,7 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  BuildContext loadingDialogContext;
+  BuildContext? loadingDialogContext;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
                     ),
                     controller: this._phoneNumberController,
                     validator: (value) =>
-                    value.isEmpty ? "phone number is required" : null,
+                    value != null && value.isEmpty ? "phone number is required" : null,
                   ),
                   SizedBox(
                     height: 25,
@@ -65,7 +65,7 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
                     ),
                     controller: this._voucherPinController,
                     validator: (value) =>
-                    value.isEmpty ? "voucher pin is required" : null,
+                    value != null && value.isEmpty ? "voucher pin is required" : null,
                   ),
                   Container(
                     width: double.infinity,
@@ -119,7 +119,7 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
 
   void _closeDialog() {
     if (this.loadingDialogContext != null) {
-      Navigator.of(this.loadingDialogContext).pop();
+      Navigator.of(this.loadingDialogContext!).pop();
       this.loadingDialogContext = null;
     }
   }
@@ -131,11 +131,11 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
         textAlign: TextAlign.center,
       ),
     );
-    this._scaffoldKey.currentState.showSnackBar(snackBar);
+    this._scaffoldKey.currentState?.showSnackBar(snackBar);
   }
 
   void _onPayPressed() {
-    if (this._formKey.currentState.validate()) {
+    if (this._formKey.currentState!.validate()) {
       final VoucherPaymentManager paymentManager = this.widget._paymentManager;
       FlutterwaveViewUtils.showConfirmPaymentModal(
           this.context, paymentManager.currency, paymentManager.amount,
@@ -165,7 +165,7 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
           FlutterwaveConstants.CHARGE_INITIATED == response.message) {
         this._verifyPayment(response);
       } else {
-        this._showSnackBar(response.message);
+        this._showSnackBar(response.message!);
       }
     } catch (error) {
       this._closeDialog();
@@ -187,19 +187,22 @@ class _PayWithVoucherState extends State<PayWithVoucher> {
       final client = http.Client();
       try {
         final response = await FlutterwaveAPIUtils.verifyPayment(
-            chargeResponse.data.flwRef,
+            chargeResponse.data!.flwRef!,
             client,
             this.widget._paymentManager.publicKey,
             this.widget._paymentManager.isDebugMode);
         this._closeDialog();
-        if ((response.data.status == FlutterwaveConstants.SUCCESSFUL ||
-            response.data.status == FlutterwaveConstants.SUCCESS) &&
-            response.data.amount == this.widget._paymentManager.amount &&
-            response.data.flwRef == chargeResponse.data.flwRef) {
+        if ((response.data!.status == FlutterwaveConstants.SUCCESSFUL ||
+            response.data!.status == FlutterwaveConstants.SUCCESS) &&
+            response.data!.amount == this.widget._paymentManager.amount &&
+            response.data!.flwRef == chargeResponse.data!.flwRef) {
           timer.cancel();
           this._onComplete(response);
         } else {
-          this._showSnackBar(response.message);
+          if (!timer.isActive) {
+            this._closeDialog();
+            this._showSnackBar(response.message!);
+          }
         }
       } catch (error) {
         timer.cancel();

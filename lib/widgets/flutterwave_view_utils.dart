@@ -33,7 +33,7 @@ class FlutterwaveViewUtils {
               ),
             ),
             FlatButton(
-              onPressed: onContinuePressed,
+              onPressed: () => onContinuePressed(),
               child: Text(
                 "CONTINUE",
                 style: TextStyle(fontSize: 16, letterSpacing: 1),
@@ -50,7 +50,7 @@ class FlutterwaveViewUtils {
     Navigator.of(context).pop(true);
   }
 
-  static Widget appBar(final BuildContext context, final String title) {
+  static AppBar appBar(final BuildContext context, final String title) {
     return AppBar(
       backgroundColor: Color(0xFFfff1d0),
       leading: IconButton(

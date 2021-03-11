@@ -33,15 +33,17 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  BuildContext loadingDialogContext;
-  String selectedNetwork;
-  FrancoPhoneCountry selectedFrancophoneCountry;
+  BuildContext? loadingDialogContext;
+  String? selectedNetwork;
+  FrancoPhoneCountry? selectedFrancophoneCountry;
+  String updatedNumber = "";
 
   @override
   Widget build(BuildContext context) {
-    final String initialPhoneNumber = this.widget._paymentManager.phoneNumber;
-    this._phoneNumberController.text =
-        initialPhoneNumber != null ? initialPhoneNumber : "";
+    final String initialPhoneNumber = updatedNumber.isEmpty
+        ? this.widget._paymentManager.phoneNumber
+        : updatedNumber;
+    this._phoneNumberController.text = initialPhoneNumber;
 
     final String currency = this.widget._paymentManager.currency;
     return MaterialApp(
@@ -64,8 +66,10 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
                       hintText: "Phone Number",
                     ),
                     controller: this._phoneNumberController,
-                    validator: (value) =>
-                        value.isEmpty ? "Phone number is required" : null,
+                    onChanged: (text) => {updatedNumber = text},
+                    validator: (value) => value != null && value.isEmpty
+                        ? "Phone number is required"
+                        : null,
                   ),
                   Container(
                     margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
@@ -93,8 +97,9 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
                         controller: this._francophoneCountryCotroller,
                         readOnly: true,
                         onTap: this._showFrancophoneBottomSheet,
-                        validator: (value) =>
-                            value.isEmpty ? "country is required" : null,
+                        validator: (value) => value != null && value.isEmpty
+                            ? "country is required"
+                            : null,
                       ),
                     ),
                   ),
@@ -111,8 +116,9 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
                         controller: this._networkController,
                         readOnly: true,
                         onTap: this._showNetworksBottomSheet,
-                        validator: (value) =>
-                            value.isEmpty ? "Network is required" : null,
+                        validator: (value) => value != null && value.isEmpty
+                            ? "Network is required"
+                            : null,
                       ),
                     ),
                   ),
@@ -139,12 +145,17 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
     );
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    this._phoneNumberController.dispose();
+  }
+
   void _onPayPressed() {
-    if (this._formKey.currentState.validate()) {
+    if (this._formKey.currentState!.validate()) {
       final MobileMoneyPaymentManager pm = this.widget._paymentManager;
       FlutterwaveViewUtils.showConfirmPaymentModal(
           this.context, pm.currency, pm.amount, this._handlePayment);
-      // this._handlePayment();
     }
   }
 
@@ -177,7 +188,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
 
   void _closeDialog() {
     if (this.loadingDialogContext != null) {
-      Navigator.of(this.loadingDialogContext).pop();
+      Navigator.of(this.loadingDialogContext!).pop();
       this.loadingDialogContext = null;
     }
   }
@@ -299,7 +310,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
         textAlign: TextAlign.center,
       ),
     );
-    this._scaffoldKey.currentState.showSnackBar(snackBar);
+    this._scaffoldKey.currentState!.showSnackBar(snackBar);
   }
 
   void _handlePayment() async {
@@ -309,24 +320,23 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
 
     final MobileMoneyPaymentManager mobileMoneyPaymentManager =
         this.widget._paymentManager;
-    if (this._phoneNumberController.text != null &&
-        this._phoneNumberController.text.isNotEmpty) {
-      this.widget._paymentManager.phoneNumber =
-          this._phoneNumberController.text;
+
+    if (this.updatedNumber.isNotEmpty) {
+      this.widget._paymentManager.phoneNumber = this.updatedNumber.trim();
     }
     final MobileMoneyRequest request = MobileMoneyRequest(
       amount: mobileMoneyPaymentManager.amount,
       currency: mobileMoneyPaymentManager.currency,
-      network: this.selectedNetwork == null ? "" : this.selectedNetwork,
+      network: this.selectedNetwork == null ? "" : this.selectedNetwork!,
       txRef: mobileMoneyPaymentManager.txRef,
       fullName: mobileMoneyPaymentManager.fullName,
       email: mobileMoneyPaymentManager.email,
-      phoneNumber: this._phoneNumberController.text,
+      phoneNumber: this.widget._paymentManager.phoneNumber.trim(),
       voucher: this._voucherController.text,
       redirectUrl: mobileMoneyPaymentManager.redirectUrl,
       country: this.selectedFrancophoneCountry == null
           ? ""
-          : this.selectedFrancophoneCountry.countryCode,
+          : this.selectedFrancophoneCountry!.countryCode,
     );
 
     final http.Client client = http.Client();
@@ -337,18 +347,18 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
 
       if (FlutterwaveConstants.SUCCESS == response.status &&
           FlutterwaveConstants.CHARGE_INITIATED == response.message) {
-        if (response.meta.authorization.mode == Authorization.REDIRECT &&
-            response.meta.authorization.redirect != null) {
-          this._openOtpScreen(response.meta.authorization.redirect);
+        if (response.meta!.authorization!.mode == Authorization.REDIRECT &&
+            response.meta!.authorization!.redirect != null) {
+          this._openOtpScreen(response.meta!.authorization!.redirect!);
           return;
         }
-        if (response.meta.authorization.mode == Authorization.CALLBACK) {
-          this._verifyPayment(response.data.flwRef);
+        if (response.meta!.authorization!.mode == Authorization.CALLBACK) {
+          this._verifyPayment(response.data!.flwRef!);
           return;
         }
-        this._showSnackBar(response.message);
+        this._showSnackBar(response.message!);
       } else {
-        this._showSnackBar(response.message);
+        this._showSnackBar(response.message!);
       }
     } catch (error) {
       this._closeDialog();
@@ -361,7 +371,7 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
       this.context,
       MaterialPageRoute(
           builder: (context) => AuthorizationWebview(
-              Uri.encodeFull(url), this.widget._paymentManager.redirectUrl)),
+              Uri.encodeFull(url), this.widget._paymentManager.redirectUrl!)),
     );
     if (result != null) {
       if (result.runtimeType == " ".runtimeType) {
@@ -381,14 +391,14 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
     final numberOfTries = timeOutInSeconds / requestIntervalInSeconds;
     int intialCount = 0;
 
-    ChargeResponse response;
+    ChargeResponse? response;
 
     this._showLoading(FlutterwaveConstants.VERIFYING);
 
     Timer.periodic(Duration(seconds: requestIntervalInSeconds), (timer) async {
       if (intialCount >= numberOfTries && response != null) {
         timer.cancel();
-        return this._onComplete(response);
+        return this._onComplete(response!);
       }
       final client = http.Client();
       try {
@@ -397,16 +407,16 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
             client,
             this.widget._paymentManager.publicKey,
             this.widget._paymentManager.isDebugMode);
-        if ((response.data.status == FlutterwaveConstants.SUCCESSFUL ||
-                response.data.status == FlutterwaveConstants.SUCCESS) &&
-            response.data.amount == this.widget._paymentManager.amount &&
-            response.data.flwRef == flwRef) {
+        if ((response!.data!.status == FlutterwaveConstants.SUCCESSFUL ||
+                response!.data!.status == FlutterwaveConstants.SUCCESS) &&
+            response!.data!.amount == this.widget._paymentManager.amount &&
+            response!.data!.flwRef == flwRef) {
           timer.cancel();
-          this._onComplete(response);
+          this._onComplete(response!);
         } else {
           if (!timer.isActive) {
             this._closeDialog();
-            this._showSnackBar(response.message);
+            this._showSnackBar(response!.message!);
           }
         }
       } catch (error) {
