@@ -1,3 +1,5 @@
+## [0.0.3-dev.2]
+* Added support for NO_AUTH cards
 
 ## [0.0.3-dev.1]
 * Optimized payment home screen - November 11, 2020

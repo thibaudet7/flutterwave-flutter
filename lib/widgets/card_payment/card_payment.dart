@@ -54,7 +54,7 @@ class _CardPaymentState extends State<CardPayment>
       debugShowCheckedModeBanner: widget._paymentManager.isDebugMode,
       home: Scaffold(
         key: this._scaffoldKey,
-        appBar: FlutterwaveViewUtils.appBar(context, "Pay with card"),
+        appBar: FlutterwaveViewUtils.appBar(context, "Card"),
         body: Form(
           key: this._cardFormKey,
           child: Container(

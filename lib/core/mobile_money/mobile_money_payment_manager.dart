@@ -38,8 +38,6 @@ class MobileMoneyPaymentManager {
       MobileMoneyRequest mobileMoneyRequest, http.Client client) async {
     final requestBody = mobileMoneyRequest.toJson();
 
-    print("momo manager number --> $phoneNumber");
-    print("momo request --> $requestBody");
     final url = FlutterwaveURLS.getBaseUrl(this.isDebugMode) +
         FlutterwaveURLS.getMobileMoneyUrl(this.currency);
     final uri = Uri.parse(url);
