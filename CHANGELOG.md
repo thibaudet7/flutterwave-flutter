@@ -1,8 +1,8 @@
-## [0.0.3-dev.2]
+## [0.0.3-dev.2] - March 12, 2021
 * Added support for NO_AUTH cards
 
 ## [0.0.3-dev.1]
-* Optimized payment home screen - November 11, 2020
+* Optimized payment home screen - March 11, 2021
 * Displayed debug label only on production
 * Added metric tracking
 * Updated UI
