@@ -33,6 +33,4 @@ class MetricManager {
       client.post(Uri.parse(_METRIC_URL), body: jsonEncode(request));
     } catch (ignored) { }
   }
-  
-
 }
