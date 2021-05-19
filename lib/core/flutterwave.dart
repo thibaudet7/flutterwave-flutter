@@ -142,13 +142,33 @@ class Flutterwave {
       this.acceptUSSDPayment = false;
       this.acceptBankTransfer = false;
     }
+    if (this.currency == FlutterwaveCurrency.ZAR) {
+      this.acceptFrancophoneMobileMoney = false;
+      this.acceptAccountPayment = false;
+      this.acceptRwandaMoneyPayment = false;
+      this.acceptMpesaPayment = false;
+      this.acceptGhanaPayment = false;
+      this.acceptUgandaPayment = false;
+      this.acceptUSSDPayment = false;
+      this.acceptBankTransfer = false;
+    } else {
+      this.acceptCardPayment = true;
+
+      this.acceptAccountPayment = false;
+      this.acceptRwandaMoneyPayment = false;
+      this.acceptMpesaPayment = false;
+      this.acceptGhanaPayment = false;
+      this.acceptUgandaPayment = false;
+      this.acceptUSSDPayment = false;
+      this.acceptBankTransfer = false;
+    }
   }
 
   String _setCountry() {
     switch (this.currency) {
       //TODO to be included once ACH payment is available on v3
-      // case FlutterwaveCurrency.ZAR:
-      //   return "ZA";
+      case FlutterwaveCurrency.ZAR:
+        return "ZA";
       case FlutterwaveCurrency.NGN:
         return "NG";
       case FlutterwaveCurrency.GHS:

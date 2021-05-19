@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterwave/core/card_payment_manager/card_payment_manager.dart';
 import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
 import 'package:flutterwave/core/metrics/metric_manager.dart';
@@ -75,7 +76,7 @@ class _CardPaymentState extends State<CardPayment>
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                  margin: EdgeInsets.fromLTRB(40, 5, 40, 5),
                   width: double.infinity,
                   child: TextFormField(
                     decoration: InputDecoration(
@@ -94,15 +95,19 @@ class _CardPaymentState extends State<CardPayment>
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width / 5,
-                      margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      width: MediaQuery.of(context).size.width / 7,
+                      margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          hintText: "Month",
+                          hintText: "MM",
                           labelText: "Month",
+                          counterText: "",
                         ),
+                        maxLength: 2,
+                        maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
                         autocorrect: false,
@@ -115,13 +120,16 @@ class _CardPaymentState extends State<CardPayment>
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 5,
-                      margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      width: MediaQuery.of(context).size.width / 7,
+                      margin: EdgeInsets.fromLTRB(40, 5, 40, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          hintText: "Year",
+                          hintText: "YY",
                           labelText: "Year",
+                          counterText: "",
                         ),
+                        maxLength: 2,
+                        maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
                         autocorrect: false,
@@ -134,13 +142,16 @@ class _CardPaymentState extends State<CardPayment>
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 5,
-                      margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      width: MediaQuery.of(context).size.width / 7,
+                      margin: EdgeInsets.fromLTRB(40, 5, 40, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          hintText: "cvv",
-                          labelText: "cvv",
+                          hintText: "Cvv",
+                          labelText: "Cvv",
+                          counterText: "",
                         ),
+                        maxLength: 3,
+                        maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.number,
                         obscureText: true,
@@ -150,8 +161,9 @@ class _CardPaymentState extends State<CardPayment>
                           fontSize: 20.0,
                         ),
                         controller: this._cardCvvFieldController,
-                        validator: (value) =>
-                            value != null && value.isEmpty ? "cvv is required" : null,
+                        validator: (value) => value != null && value.isEmpty
+                            ? "cvv is required"
+                            : null,
                       ),
                     ),
                   ],
@@ -159,7 +171,7 @@ class _CardPaymentState extends State<CardPayment>
                 Container(
                   width: double.infinity,
                   height: 45,
-                  margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                  margin: EdgeInsets.fromLTRB(40, 20, 20, 40),
                   child: RaisedButton(
                     onPressed: this._onCardFormClick,
                     color: Colors.orangeAccent,
@@ -192,7 +204,8 @@ class _CardPaymentState extends State<CardPayment>
     this._showLoading(FlutterwaveConstants.INITIATING_PAYMENT);
 
     final ChargeCardRequest chargeCardRequest = ChargeCardRequest(
-        cardNumber: this._cardNumberFieldController.value.text.trim(),
+        cardNumber: this._cardNumberFieldController.value.text.trim()
+            .replaceAll(new RegExp(r"\s+"), ""),
         cvv: this._cardCvvFieldController.value.text.trim(),
         expiryMonth: this._cardMonthFieldController.value.text.trim(),
         expiryYear: this._cardYearFieldController.value.text.trim(),
@@ -214,7 +227,7 @@ class _CardPaymentState extends State<CardPayment>
   }
 
   String? _validateCardField(String? value) {
-    return  value != null && value.trim().isEmpty ? "Please fill this" : null;
+    return value != null && value.trim().isEmpty ? "Please fill this" : null;
   }
 
   void _hideKeyboard() {
