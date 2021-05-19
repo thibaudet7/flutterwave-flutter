@@ -30,20 +30,18 @@ See [references](#references) for links to dashboard and API documentation.
 ### Prerequisite
 
 - Ensure you have your test (and live) [API keys](https://developer.flutterwave.com/docs/api-keys).
+- This Library runs and the V3 API, and so you **need** to be PCI-DSS certified to use this.
 ```
 Flutter version >= 1.17.0
 Flutterwave version 3 API keys
 ```
 
  ### Installing
- 
-**Step 1.** Add it in your root build.gradle at the end of repositories:
-
-**Step 2.** Add the dependency
+Add the dependency
 
 In your `pubspec.yaml` file add:
 
-1. `flutterwave: 0.0.3-dev.2`
+1. `flutterwave: 0.0.3-dev.3`
 2. run `flutter pub get`
 
 <a id="usage"></a>
@@ -58,13 +56,13 @@ Create a `Flutterwave` instance by calling the constructor `Flutterwave.forUIPay
        try { 
 		     Flutterwave flutterwave = Flutterwave.forUIPayment(
                          context: this.context,
-                         encryptionKey: "FLWPUBK_TEST-SANDBOXDEMOKEY-X",
-                         publicKey: "FLWPUBK_TEST-SANDBOXDEMOKEY-X",
-                         currency: this.currency,
-                         amount: this.amount,
+                         encryptionKey: "Your_test_encryption_key_here",
+                         publicKey: "Your_test_public_key_here",
+                         currency: currency,
+                         amount: amount,
                          email: "valid@email.com",
                          fullName: "Valid Full Name",
-                         txRef: this.txref,
+                         txRef: txref,
                          isDebugMode: true,
                          phoneNumber: "0123456789",
                          acceptCardPayment: true,

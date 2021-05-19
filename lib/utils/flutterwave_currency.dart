@@ -7,10 +7,11 @@ class FlutterwaveCurrency {
   static const String GHS = "GHS";
   static const String XAF = "XAF";
   static const String XOF = "XOF";
+  static const String ZAR = "ZAR";
+
 
 //TODO to be added when available on v3
 // static const String GBP = "GBP";
-// static const String ZAR = "ZAR";
 
   /// Returns a list of Mobile Money Networks available in a country
   static List<String> getAllowedMobileMoneyNetworksByCurrency(

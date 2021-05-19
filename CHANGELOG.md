@@ -1,3 +1,6 @@
+## [0.0.3-dev.3] - May 19, 2021
+* Added support for card payment in ZAR
+
 ## [0.0.3-dev.2] - March 12, 2021
 * Added support for NO_AUTH cards
 
