@@ -41,7 +41,7 @@ Add the dependency
 
 In your `pubspec.yaml` file add:
 
-1. `flutterwave: 0.0.3-dev.3`
+1. `flutterwave: 0.0.3-dev.4`
 2. run `flutter pub get`
 
 <a id="usage"></a>
@@ -109,8 +109,8 @@ Create a `Flutterwave` instance by calling the constructor `Flutterwave.forUIPay
       beginPayment() async {
         final Flutterwave flutterwave = Flutterwave.forUIPayment(
             context: this.context,
-            encryptionKey: "FLWPUBK_TEST-SANDBOXDEMOKEY-X",
-            publicKey: "FLWPUBK_TEST-SANDBOXDEMOKEY-X",
+            encryptionKey: "your_test_encryption_key",
+            publicKey: "your_public_key",
             currency: this.currency,
             amount: this.amount,
             email: "valid@email.com",

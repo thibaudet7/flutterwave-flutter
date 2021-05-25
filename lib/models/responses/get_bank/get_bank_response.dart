@@ -5,7 +5,7 @@ class GetBanksResponse {
   String? message;
   List<Bank>? banks;
 
-  GetBanksResponse({this.status, this.message,this.banks});
+  GetBanksResponse({this.status, this.message, this.banks});
 
   // GetBanksResponse.fromJson(Map<String, dynamic> json) {
   //   bankname = json['bankname'];

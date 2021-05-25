@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterwave/core/core_utils/flutterwave_api_utils.dart';
+import 'package:flutterwave/models/bank.dart';
 import 'package:flutterwave/models/requests/charge_card/validate_charge_request.dart';
 import 'package:flutterwave/models/responses/charge_card_response/charge_card_response_data.dart';
 import 'package:flutterwave/models/responses/charge_response.dart';
@@ -15,44 +16,40 @@ class MockClient extends Mock implements http.Client {}
 
 class MockResponse extends Mock implements http.Response {}
 
-class MockChargeResponse extends Mock implements ChargeResponse { }
+class MockChargeResponse extends Mock implements ChargeResponse {}
 
 main() {
   group('getBanks', () {
     test('returns a list of banks if it completes successfully', () async {
       final bankResult = [
-        {
-          "bankname": "ACCESS BANK NIGERIA",
-          "bankcode": "044",
-          "internetbanking": false
-        },
-        {
-          "bankname": "FIRST BANK PLC",
-          "bankcode": "011",
-          "internetbanking": false
-        },
-        {"bankname": "GTBANK PLC", "bankcode": "058", "internetbanking": false},
-        {
-          "bankname": "ZENITH BANK PLC",
-          "bankcode": "057",
-          "internetbanking": false
-        }
+        Bank(name: "ACCESS BANK NIGERIA", code: "044", id: "67"),
+        Bank(name: "ZENITH BANK PLC", code: "057", id: "400")
       ];
 
-      final response = jsonEncode(bankResult);
+      final getBanksResponse = GetBanksResponse(
+          message: "fetched successfully",
+          status: "success",
+          banks: bankResult);
+
+      final response = jsonEncode(getBanksResponse);
       final client = MockClient();
       final mockResponse = MockResponse();
       when(mockResponse.statusCode).thenReturn(200);
       when(mockResponse.body).thenReturn(response);
 
-      when(client.get(Uri.https(FlutterwaveURLS.GET_BANKS_URL, "")))
-          .thenAnswer((_) async => mockResponse);
+      final uri = Uri.parse("https://api.flutterwave.com/v3/banks/NG");
+      when(client.get(
+        uri,
+        headers: {
+          HttpHeaders.authorizationHeader: "Bearer ",
+          HttpHeaders.contentTypeHeader: 'application/json'
+        },
+      )).thenAnswer((_) async => mockResponse);
 
       expect(200, mockResponse.statusCode);
-      expect(await FlutterwaveAPIUtils.getBanks(client),
-          isA<List<GetBanksResponse>>());
+      expect(await FlutterwaveAPIUtils.getBanks(client, ""),
+          isA<List<Bank>>());
       verify(client.close()).called(1);
-
     });
   });
 
@@ -66,8 +63,9 @@ main() {
       final flwRef = "some_ref";
       final otp = "123445";
       final String publicKey = "publicKey";
-      final url = FlutterwaveURLS.getBaseUrl(isDebugMode) + FlutterwaveURLS.VALIDATE_CHARGE;
-      final uri = Uri.https(url, "");
+      final url = FlutterwaveURLS.getBaseUrl(isDebugMode) +
+          FlutterwaveURLS.VALIDATE_CHARGE;
+      final uri = Uri.parse(url);
       final mockHeaders = {HttpHeaders.authorizationHeader: publicKey};
       final payload = ValidateChargeRequest(otp, flwRef, false).toJson();
 
@@ -103,10 +101,7 @@ main() {
           }
         },
         "meta": {
-          "authorization": {
-            "mode": "callback",
-            "redirect_url": null
-          }
+          "authorization": {"mode": "callback", "redirect_url": null}
         }
       };
 
@@ -117,12 +112,14 @@ main() {
       when(mockChargeResponse.data).thenReturn(mockChargeResponseData);
       when(mockResponse.statusCode).thenReturn(200);
       when(mockResponse.body).thenReturn(response);
-      when(client.post(uri, body: payload, headers: mockHeaders)).thenAnswer((_) async => mockResponse);
+      when(client.post(uri, body: payload, headers: mockHeaders))
+          .thenAnswer((_) async => mockResponse);
 
       expect(200, mockResponse.statusCode);
-      expect(await FlutterwaveAPIUtils
-          .validatePayment(otp, flwRef, client, isDebugMode, publicKey, false),
-      isA<ChargeResponse>());
+      expect(
+          await FlutterwaveAPIUtils.validatePayment(
+              otp, flwRef, client, isDebugMode, publicKey, false),
+          isA<ChargeResponse>());
     });
   });
 }

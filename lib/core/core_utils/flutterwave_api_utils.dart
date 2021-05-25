@@ -14,13 +14,13 @@ import 'package:http/http.dart' as http;
 class FlutterwaveAPIUtils {
   /// This method fetches a list of Nigerian banks
   /// it returns an instance of GetBanksResponse or throws an error
-  static Future<List<Bank>> getBanks(final http.Client client) async {
+  static Future<List<Bank>> getBanks(final http.Client client, String publicKey) async {
     try {
       final response = await client.get(
         Uri.parse("https://api.flutterwave.com/v3/banks/NG"),
         headers: {
           HttpHeaders.authorizationHeader:
-              "Bearer FLWSECK_TEST-SANDBOXDEMOKEY-X",
+              "Bearer $publicKey",
           HttpHeaders.contentTypeHeader: 'application/json'
         },
       );

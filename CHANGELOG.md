@@ -1,3 +1,7 @@
+## [0.0.3-dev.4] - May 25, 2021
+* Fix Card Payment screen UI distortion
+* Fix bug where only Card payment is displayed for all currency
+
 ## [0.0.3-dev.3] - May 19, 2021
 * Added support for card payment in ZAR
 
