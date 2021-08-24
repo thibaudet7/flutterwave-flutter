@@ -1,8 +1,7 @@
 import 'package:flutterwave/core/flutterwave_error.dart';
 import 'package:flutterwave/models/francophone_country.dart';
 import 'package:flutterwave/utils/flutterwave_currency.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:tripledes/tripledes.dart';
+import 'package:tripledes_nullsafety/tripledes_nullsafety.dart';
 
 class FlutterwaveUtils {
   
