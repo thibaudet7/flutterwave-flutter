@@ -76,7 +76,7 @@ class _CardPaymentState extends State<CardPayment>
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                  margin: EdgeInsets.fromLTRB(40, 5, 40, 5),
                   width: double.infinity,
                   child: TextFormField(
                     decoration: InputDecoration(
@@ -98,8 +98,8 @@ class _CardPaymentState extends State<CardPayment>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width / 5,
-                      margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      width: MediaQuery.of(context).size.width / 7,
+                      margin: EdgeInsets.fromLTRB(30, 5, 30, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
                           hintText: "MM",
@@ -120,8 +120,8 @@ class _CardPaymentState extends State<CardPayment>
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 5,
-                      margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      width: MediaQuery.of(context).size.width / 7,
+                      margin: EdgeInsets.fromLTRB(40, 5, 40, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
                           hintText: "YY",
@@ -142,8 +142,8 @@ class _CardPaymentState extends State<CardPayment>
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 5,
-                      margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                      width: MediaQuery.of(context).size.width / 7,
+                      margin: EdgeInsets.fromLTRB(40, 5, 40, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
                           hintText: "cvv",
@@ -171,7 +171,7 @@ class _CardPaymentState extends State<CardPayment>
                 Container(
                   width: double.infinity,
                   height: 45,
-                  margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                  margin: EdgeInsets.fromLTRB(40, 20, 20, 40),
                   child: RaisedButton(
                     onPressed: this._onCardFormClick,
                     color: Colors.orangeAccent,
