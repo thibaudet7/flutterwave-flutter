@@ -104,7 +104,9 @@ class _PayWithMobileMoneyState extends State<PayWithMobileMoney> {
                     ),
                   ),
                   Visibility(
-                    visible: currency.toUpperCase() == FlutterwaveCurrency.GHS,
+                    visible:
+                        FlutterwaveCurrency.GHS == currency.toUpperCase() ||
+                            FlutterwaveCurrency.ZMW == currency.toUpperCase(),
                     child: Container(
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                       width: double.infinity,

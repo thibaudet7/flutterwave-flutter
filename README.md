@@ -41,7 +41,7 @@ Add the dependency
 
 In your `pubspec.yaml` file add:
 
-1. `flutterwave: 0.0.3-dev.4`
+1. `flutterwave: 1.0.0`
 2. run `flutter pub get`
 
 <a id="usage"></a>

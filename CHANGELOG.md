@@ -1,3 +1,7 @@
+## [1.0.0] - August 24, 2021
+* Migrate to null-safety
+* Add Zamtel to Zambia Mobile Money
+
 ## [0.0.3-dev.4] - May 25, 2021
 * Fix Card Payment screen UI distortion
 * Fix bug where only Card payment is displayed for all currency
