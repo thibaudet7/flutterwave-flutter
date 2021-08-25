@@ -1,6 +1,6 @@
 name: "flutterwave"
 description: "Flutterwave official flutter library to accept payment via card, USSD, Mobile Money etc."
-version: 0.0.3-dev.3
+version: 1.0.0
 homepage: "https://github.com/Flutterwave/flutterwave-flutter"
 
 environment:
@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
 
   http: ^0.13.0
-  tripledes: ^2.1.0
+  tripledes_nullsafety: ^1.0.1
   webview_flutter: ^2.0.2
 
 dev_dependencies:

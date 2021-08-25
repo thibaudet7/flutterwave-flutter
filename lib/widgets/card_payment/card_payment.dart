@@ -146,8 +146,8 @@ class _CardPaymentState extends State<CardPayment>
                       margin: EdgeInsets.fromLTRB(40, 5, 40, 5),
                       child: TextFormField(
                         decoration: InputDecoration(
-                          hintText: "Cvv",
-                          labelText: "Cvv",
+                          hintText: "cvv",
+                          labelText: "cvv",
                           counterText: "",
                         ),
                         maxLength: 3,

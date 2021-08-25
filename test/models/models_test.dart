@@ -53,6 +53,7 @@ main() {
         expiryMonth: "12",
         cvv: "419",
         expiryYear: "2090",
+        redirectUrl: null,
         fullName: "FredDominant Tha Boss",
         txRef: "some_ref");
 
@@ -61,7 +62,10 @@ main() {
       expect("GHS", chargeCardRequest.currency);
       expect("12", chargeCardRequest.expiryMonth);
       expect(true, chargeCardRequest.authorization == null);
-      expect(FlutterwaveURLS.DEFAULT_REDIRECT_URL, chargeCardRequest.redirectUrl);
+      expect(
+          FlutterwaveURLS.DEFAULT_REDIRECT_URL,
+          chargeCardRequest.toJson()["redirect_url"]
+      );
     });
 
     test("toJson() should work correctly", () {
@@ -80,7 +84,7 @@ main() {
 
     test("objects should initialize correctly", () {
       expect("123", validateChargeRequest.otp);
-      expect("GHS", validateChargeRequest.flwRef);
+      expect("ref", validateChargeRequest.flwRef);
       expect(false, validateChargeRequest.isBankAccount);
     });
 
@@ -88,10 +92,8 @@ main() {
       final json = validateChargeRequest.toJson();
 
       expect(true, json != null);
-      expect("419", json["cvv"]);
-      expect("100", json["amount"]);
-      expect("email.com", json["email"]);
-      expect(true, json["authorization"] != null);
+      expect(validateChargeRequest.otp, "123");
+      expect(false, validateChargeRequest.isBankAccount);
     });
 
     test("fromJson() should work correctly", () {

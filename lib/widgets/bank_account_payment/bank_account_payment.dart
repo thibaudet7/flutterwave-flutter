@@ -41,7 +41,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
   @override
   void initState() {
     super.initState();
-    this.banks = FlutterwaveAPIUtils.getBanks(http.Client());
+    this.banks = FlutterwaveAPIUtils.getBanks(http.Client(), this.widget._paymentManager.publicKey);
   }
 
   @override

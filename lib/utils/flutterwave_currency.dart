@@ -24,7 +24,7 @@ class FlutterwaveCurrency {
       case RWF:
         return [];
       case ZMW:
-        return [];
+        return ["MTN", "ZAMTEL", "AIRTEL"];
     }
     return [];
   }
