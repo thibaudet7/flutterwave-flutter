@@ -110,9 +110,11 @@ class _RequestAddressState extends State<RequestAddress> {
                       width: double.infinity,
                       height: 50,
                       margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         onPressed: this._onAddressFilled,
-                        color: Colors.orangeAccent,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.orangeAccent, // Background color
+                        ),
                         child: Text(
                           "CONTINUE PAYMENT",
                           style: TextStyle(color: Colors.white),

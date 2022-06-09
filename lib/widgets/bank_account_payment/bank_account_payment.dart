@@ -124,9 +124,11 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
                     width: double.infinity,
                     height: 50,
                     margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    child: RaisedButton(
+                    child: ElevatedButton(
                       onPressed: this._onPaymentClicked,
-                      color: Colors.orangeAccent,
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.orangeAccent, // Background color
+                      ),
                       child: Text(
                         "PAY WITH ACCOUNT",
                         style: TextStyle(color: Colors.white, fontSize: 15),
@@ -421,7 +423,7 @@ class PayWithBankAccountState extends State<PayWithBankAccount> {
         textAlign: TextAlign.center,
       ),
     );
-    this._scaffoldKey.currentState?.showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Future<void> _showLoading(String message) {
